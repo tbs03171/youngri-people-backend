@@ -18,11 +18,6 @@ public class LoginController {
 
     private final LoginService loginService;
 
-    @GetMapping("/login")
-    public ResponseEntity<Void> loginForm(){
-        return ResponseEntity.noContent().build();
-    }
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginForm loginForm, BindingResult bindingResult){
 
