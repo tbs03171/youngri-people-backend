@@ -11,6 +11,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberRepository {
 
+
     private final EntityManager em;
 
     public void save(Member member){
@@ -28,10 +29,16 @@ public class MemberRepository {
                 .getResultList();
     }
 
-    public List<Member> findByName(String name){
-        return em.createQuery("select m from Member m where m.name = :name",Member.class)
+    public List<Member> findByName(String name) {
+        return em.createQuery("select m from Member m where m.name = :name", Member.class)
                 .setParameter("name", name)
                 .getResultList();
     }
 
+
+    public Member findByEmail(String email) {
+        return em.createQuery("select m from Member m where m.email = :email", Member.class)
+                .setParameter("email", email)
+                .getSingleResult();
+    }
 }

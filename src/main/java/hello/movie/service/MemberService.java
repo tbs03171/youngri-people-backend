@@ -3,6 +3,7 @@ package hello.movie.service;
 import hello.movie.model.Member;
 import hello.movie.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -31,12 +33,4 @@ public class MemberService {
     public Member findOne(Long memberId){
         return memberRepository.findOne(memberId);
     }
-
-    //회원 이름 수정
-    @Transactional
-    public void update(Long id, String name){
-        Member member = memberRepository.findOne(id);
-        memberRepository.update(member);
-    }
-
 }

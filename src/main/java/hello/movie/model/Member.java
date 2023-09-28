@@ -1,26 +1,46 @@
 package hello.movie.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import lombok.Getter;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
-    @Id @GeneratedValue
-    private long id;
-    private String loginId;
-    private String password;
-    private String nickName;
-    private String name;
-    private LocalDate birthday;
-    private Gender gender; //[M, F]
-    private int age;
-    private int phoneNumber;
+    @Id
+    @GeneratedValue
+    @Column(name = "MEMBER_ID")
+    private Long id;
     private String email;
+    private String password;
+    private String name;
+    private String phoneNumber;
 
+    @Enumerated(EnumType.STRING)
+    private Gender gender; //[MALE, FEMALE]
+
+    @Temporal(TemporalType.DATE)
+    private Date birthDate;
+    private String profilePath;
+    private String nickname;
+
+    @Enumerated(EnumType.STRING)
+    private Mbti mbti;
+
+    @Builder
+    public Member(String email, String password, String name, String phoneNumber,
+                  Gender gender, Date birthDate, String nickname){
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.gender = gender;
+        this.birthDate = birthDate;
+        this.nickname = nickname;
+    }
 }
