@@ -1,14 +1,16 @@
 package hello.movie.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Getter
+@Builder
 public class Movie {
 
     @Id
@@ -16,19 +18,21 @@ public class Movie {
     @Column(name = "MOVIE_ID")
     private Long id;
 
+    private Long tmdbId;
+
     private String title;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    private List<MovieActor> actors;
+    private final List<MovieActor> actors = new ArrayList<>();
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    private List<MovieCrew> crew;
+    private final List<MovieCrew> crew = new ArrayList<>();
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    private List<MovieGenre> genre;
+    private final List<MovieGenre> genres = new ArrayList<>();
 
     @Temporal(TemporalType.DATE)
-    private Date releaseDate;
+    private LocalDate releaseDate;
 
     @Column(columnDefinition = "TEXT")
     private String overview;
@@ -38,4 +42,23 @@ public class Movie {
     private String posterPath;
 
     private String trailerPath;
+
+    /**
+     * 연관관계 메서드
+     */
+    public void addMovieActor(MovieActor movieActor) {
+        actors.add(movieActor);
+        movieActor.setMovie(this);
+    }
+
+
+    public void addMovieCrew(MovieCrew crewMember) {
+        crew.add(crewMember);
+        crewMember.setMovie(this);
+    }
+
+    public void addMovieGenre(MovieGenre movieGenre) {
+        genres.add(movieGenre);
+        movieGenre.setMovie(this);
+    }
 }
