@@ -12,6 +12,9 @@ spring:
         hibernate:
           show_sql: true
           format_sql: true
+
+  profiles:
+    include: API-KEY
 logging:
   level:
     org.hibernate.SQL: debug
