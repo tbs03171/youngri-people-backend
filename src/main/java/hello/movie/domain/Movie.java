@@ -37,7 +37,7 @@ public class Movie {
     @Column(columnDefinition = "TEXT")
     private String overview;
 
-    private Float rating;
+    private Double rating;
 
     private String posterPath;
 

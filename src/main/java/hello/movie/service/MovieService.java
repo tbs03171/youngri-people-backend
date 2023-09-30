@@ -3,10 +3,13 @@ package hello.movie.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import hello.movie.domain.Movie;
 import hello.movie.dto.MovieDTO;
+import hello.movie.dto.MovieListDTO;
 import hello.movie.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,37 +18,62 @@ public class MovieService {
 
     private final MovieRepository movieRepository;
     private final TMDBApiService tmdbApiService;
+    private final ModelMapper modelMapper = new ModelMapper();
 
-    // 영화 조회
+    /**
+     * 영화 상세 정보 조회
+     */
     public MovieDTO getMovieById(Long id) throws JsonProcessingException {
         Optional<Movie> movieOptional = movieRepository.findById(id);
         if (movieOptional.isPresent()) { // 영화 정보가 DB에 있는 경우
             Movie movie = movieOptional.get();
-            MovieDTO dto = convertToDTO(movie);
-            return dto;
+            MovieDTO movieDTO = convertToMovieDTO(movie);
+            return movieDTO;
         } else { // 영화 정보가 DB에 없는 경우
             Movie movie = tmdbApiService.getMovieById(id);
             movieRepository.save(movie);
-            MovieDTO dto = convertToDTO(movie);
-            return dto;
+            MovieDTO movieDTO = convertToMovieDTO(movie);
+            return movieDTO;
         }
     }
 
-    // 영화 등록
-    public void saveMovie(Movie movie) {
-        movieRepository.save(movie);
+    /**
+     * 현재 상영중인 영화 조회
+     */
+    public List<MovieListDTO> getNowPlayingMovies() {
+        return tmdbApiService.getNowPlayingMovies();
     }
 
-    // 엔티티를 DTO로 변환
-    public MovieDTO convertToDTO(Movie movie) {
-        MovieDTO dto = new MovieDTO();
-        dto.setTitle(movie.getTitle());
-        dto.setOverview(movie.getOverview());
-        dto.setRating(movie.getRating());
-        dto.setReleaseDate(movie.getReleaseDate());
-        dto.setTrailerPath(movie.getTrailerPath());
-        dto.setPosterPath(movie.getPosterPath());
 
-        return dto;
+    /**
+     * 인기 있는 영화 조회
+     */
+    public List<MovieListDTO> getPopularMovies() {
+        return tmdbApiService.getPopularMovies();
     }
+
+
+    /**
+     * 평점 높은 영화 조회
+     */
+    public List<MovieListDTO> getTopRatedMovies() {
+        return tmdbApiService.getTopRatedMovies();
+    }
+
+
+    /**
+     * 개봉 예정인 영화 조회
+     */
+    public List<MovieListDTO> getUpcomingMovies() {
+        return tmdbApiService.getUpcomingMovies();
+    }
+
+
+    /**
+     * Movie 엔티티를 MovieDTO로 변환
+     */
+    public MovieDTO convertToMovieDTO (Movie movie) {
+        return modelMapper.map(movie, MovieDTO.class);
+    }
+
 }

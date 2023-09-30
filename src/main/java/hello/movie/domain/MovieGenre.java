@@ -2,9 +2,11 @@ package hello.movie.domain;
 
 import jakarta.persistence.*;
 import lombok.Builder;
+import lombok.Getter;
 
 @Entity
 @Builder
+@Getter
 public class MovieGenre {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
