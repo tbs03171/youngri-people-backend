@@ -5,14 +5,12 @@ import hello.movie.dto.MovieDTO;
 import hello.movie.dto.MovieListDTO;
 import hello.movie.service.MovieService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
-@RequestMapping("/movie")
+@RequestMapping("/movies")
 @RequiredArgsConstructor
 public class MovieController {
 
@@ -41,5 +39,15 @@ public class MovieController {
     @GetMapping("/upcoming")
     public List<MovieListDTO> getUpcomingMovies() {
         return movieService.getUpcomingMovies();
+    }
+
+    @GetMapping("/search/title")
+    public List<MovieListDTO> searchMoviesByTitle(@RequestParam("title") String title) {
+        return movieService.searchMoviesByTitle(title);
+    }
+
+    @GetMapping("/search/person")
+    public List<MovieListDTO> searchMoviesByPerson(@RequestParam("name") String name) {
+        return movieService.searchMoviesByPerson(name);
     }
 }

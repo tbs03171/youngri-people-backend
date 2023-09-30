@@ -70,6 +70,22 @@ public class MovieService {
 
 
     /**
+     * 제목으로 영화 검색
+     */
+    public List<MovieListDTO> searchMoviesByTitle(String title) {
+        return tmdbApiService.searchMoviesByTitle(title);
+    }
+
+
+    /**
+     * 스탭 또는 배우 이름으로 영화 검색
+     */
+    public List<MovieListDTO> searchMoviesByPerson(String name) {
+        return tmdbApiService.searchMoviesByPerson(name);
+    }
+
+
+    /**
      * Movie 엔티티를 MovieDTO로 변환
      */
     public MovieDTO convertToMovieDTO (Movie movie) {
