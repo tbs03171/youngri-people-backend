@@ -22,15 +22,17 @@ public class LoginController {
     public ResponseEntity<?> login(@RequestBody @Valid LoginForm loginForm, BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
-            return ResponseEntity.badRequest()
+            return ResponseEntity
+                    .badRequest()
                     .body(bindingResult.getAllErrors());
         }
 
         Member loginMember = loginService.login(loginForm.getEmail(), loginForm.getPassword());
 
         if(loginMember == null){
-            return ResponseEntity.badRequest()
-                    .body("아이디 또는 비밀번호가 맞지 않습니다.");
+            return ResponseEntity
+                    .badRequest()
+                    .body("이메일 또는 비밀번호가 맞지 않습니다.");
         }
 
         return ResponseEntity.ok().build();

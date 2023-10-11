@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,5 +33,15 @@ public class MemberService {
     //회원 id로 조회
     public Member findOne(Long memberId){
         return memberRepository.findById(memberId);
+    }
+
+    //회원 nickname으로 조회
+    public List<Member> findByNickname(String nickname){
+        return memberRepository.findByNickname(nickname);
+    }
+
+    //회원 email로 조회
+    public Optional<Member> findByEmail(String email){
+        return memberRepository.findByEmail(email);
     }
 }

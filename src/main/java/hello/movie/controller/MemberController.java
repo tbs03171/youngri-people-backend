@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,9 +29,26 @@ public class MemberController {
         return ResponseEntity.ok(members);
     }
 
-    @GetMapping("/{id}")
+    /*@GetMapping("/{id}")
     public ResponseEntity<Member> getMemberById(@PathVariable Long id){
         Member findMember = memberService.findOne(id);
+        return ResponseEntity.ok(findMember);
+    }*/
+
+    @GetMapping("/search/nickname")
+    public List<Member> getMemberByNickname(@RequestParam("nickname") String nickname){
+        List<Member> findMembers = memberService.findByNickname(nickname);
+        return findMembers;
+    }
+
+    @GetMapping("/search/email")
+    public ResponseEntity<?> getMemberByEmail(@RequestParam("email") String email){
+        Optional<Member> findMember = memberService.findByEmail(email);
+
+        if(findMember.isEmpty()){
+            return ResponseEntity.ok().build();
+        }
+
         return ResponseEntity.ok(findMember);
     }
 
@@ -38,7 +56,8 @@ public class MemberController {
     public ResponseEntity<?> createMember(@RequestBody @Valid CreateMemberForm memberForm, BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
-            return ResponseEntity.badRequest()
+            return ResponseEntity
+                    .badRequest()
                     .body(bindingResult.getAllErrors());
         }
 
@@ -53,7 +72,7 @@ public class MemberController {
                 .build();
 
         memberService.join(member);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(member);
     }
 
     @PutMapping("/{id}")
