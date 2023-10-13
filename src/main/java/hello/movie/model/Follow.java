@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,4 +26,12 @@ public class Follow {
     @JoinColumn(name ="FOLLOWEE_ID")
     private Member followee;
 
+    @Temporal(TemporalType.DATE)
+    private Date followDate;
+
+    public Follow(Member follower, Member followee) {
+        this.follower = follower;
+        this.followee = followee;
+        this.followDate = new Date();
+    }
 }

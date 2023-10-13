@@ -25,13 +25,14 @@ public class MemberService {
         return member.getId();
     }
 
+
     //회원 전쳬 조회
     public List<Member> findMembers(){
         return memberRepository.findAll();
     }
 
     //회원 id로 조회
-    public Member findOne(Long memberId){
+    public Member findById(Long memberId){
         return memberRepository.findById(memberId);
     }
 

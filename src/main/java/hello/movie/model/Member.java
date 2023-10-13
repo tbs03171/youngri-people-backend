@@ -34,16 +34,12 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
-    @OneToMany(mappedBy = "follower")
-    private List<Follow> followings = new ArrayList<>();
 
-    @OneToMany(mappedBy = "followee")
-    private List<Follow> followers = new ArrayList<>();
 
     @Builder
     public Member(String email, String password, String name, String phoneNumber,
                   Gender gender, Date birthDate, String profilePath, String nickname,
-                  Mbti mbti, List<Follow> followings, List<Follow> followers) {
+                  Mbti mbti) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -53,7 +49,5 @@ public class Member {
         this.profilePath = profilePath;
         this.nickname = nickname;
         this.mbti = mbti;
-        this.followings = followings;
-        this.followers = followers;
     }
 }

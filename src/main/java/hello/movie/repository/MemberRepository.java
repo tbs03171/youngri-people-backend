@@ -13,7 +13,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberRepository {
 
-
     private final EntityManager em;
 
     public void save(Member member){
