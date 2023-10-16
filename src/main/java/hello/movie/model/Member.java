@@ -34,8 +34,6 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
-
-
     @Builder
     public Member(String email, String password, String name, String phoneNumber,
                   Gender gender, Date birthDate, String profilePath, String nickname,
@@ -49,5 +47,11 @@ public class Member {
         this.profilePath = profilePath;
         this.nickname = nickname;
         this.mbti = mbti;
+    }
+
+    public void updateMember(String nickname, Mbti mbti, String profilePath){
+        this.nickname = nickname;
+        this.mbti = mbti;
+        this.profilePath = profilePath;
     }
 }

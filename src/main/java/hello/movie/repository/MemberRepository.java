@@ -19,7 +19,9 @@ public class MemberRepository {
         em.persist(member);
     }
 
-
+    public void update(Member member) {
+        em.merge(member);
+    }
 
     public Member findById(Long id){
         return em.find(Member.class, id);

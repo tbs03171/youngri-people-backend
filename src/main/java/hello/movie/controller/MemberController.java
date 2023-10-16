@@ -1,18 +1,15 @@
 package hello.movie.controller;
 
 import hello.movie.dto.CreateMemberForm;
-import hello.movie.dto.UpdateMemberForm;
-import hello.movie.model.Gender;
+import hello.movie.dto.UpdateMemberDto;
 import hello.movie.model.Member;
 import hello.movie.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +19,17 @@ import java.util.Optional;
 public class MemberController {
 
     private final MemberService memberService;
+
+    @GetMapping("/{memberId}")
+    public Member getMemberById(@PathVariable("memberId") Long memberId){
+        Member member = memberService.findById(memberId);
+        return member;
+    }
+
+    @PutMapping("/{memberId}")
+    public void updateMember(@PathVariable("memberId") Long memberId, @RequestBody UpdateMemberDto updateMemberDto){
+        memberService.update(memberId, updateMemberDto);
+    }
 
     @GetMapping("")
     public ResponseEntity<List<Member>> getAllMembers(){
@@ -73,11 +81,5 @@ public class MemberController {
 
         memberService.join(member);
         return ResponseEntity.ok(member);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Member> updateMember(@PathVariable Long id, @RequestBody UpdateMemberForm memberForm){
-        return ResponseEntity.ok().build();
-
     }
 }
