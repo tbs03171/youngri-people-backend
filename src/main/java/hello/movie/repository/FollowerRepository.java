@@ -26,6 +26,15 @@ public class FollowerRepository {
         return em.find(Follow.class, id);
     }
 
+    public Follow findByFollowerAndFollowee(Member follower, Member followee){
+        return em.createQuery("select f from Follow f " +
+                "where f.follower = :follower " +
+                "and f.followee = :followee", Follow.class)
+                .setParameter("follower", follower)
+                .setParameter("followee", followee)
+                .getSingleResult();
+    }
+
     public List<Member> findAllByFollower(Long memberId){
         return em.createQuery("select f.followee from Follow f " +
                         "where f.follower in " +

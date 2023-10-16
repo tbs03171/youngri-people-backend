@@ -27,6 +27,10 @@ public class FollowerService {
         followerRepository.delete(follow);
     }
 
+    public Follow findByFollowerAndFollowee(Member follower, Member followee){
+        return followerRepository.findByFollowerAndFollowee(follower, followee);
+    }
+
     public List<Member> getFollowersList(Long memberId) {
         return followerRepository.findAllByFollower(memberId);
     }

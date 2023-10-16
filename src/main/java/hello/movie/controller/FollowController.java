@@ -36,11 +36,11 @@ public class FollowController {
     public ResponseEntity<String> unfollow(@RequestParam Long followerId, @RequestParam Long followingId){
 
         Member follower = memberService.findById(followerId);
-        Member following = memberService.findById(followingId);
+        Member followee = memberService.findById(followingId);
 
-        Follow follow = new Follow(follower, following);
-
+        Follow follow = followerService.findByFollowerAndFollowee(follower, followee);
         followerService.unfollow(follow);
+
         return ResponseEntity.ok("구독 취소");
     }
 
