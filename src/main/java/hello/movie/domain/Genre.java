@@ -40,4 +40,15 @@ public enum Genre {
         }
         return null;
     }
+
+    // genre 문자열로 Genre 값 가져옴
+    public static Genre fromString(String genre) {
+        for (Genre g : Genre.values()) {
+            if (g.name().equalsIgnoreCase(genre)) {
+                return g;
+            }
+        }
+        // 일치하는 Genre 없음
+        return null;
+    }
 }

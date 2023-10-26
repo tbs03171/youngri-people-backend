@@ -1,6 +1,7 @@
 package hello.movie.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import hello.movie.domain.Genre;
 import hello.movie.domain.Movie;
 import hello.movie.dto.MovieDTO;
 import hello.movie.dto.MovieListDTO;
@@ -86,10 +87,20 @@ public class MovieService {
 
 
     /**
+     * 장르로 영화 검색
+     */
+    public List<MovieListDTO> searchMoviesByGenre(String genre) {
+        Long id = (Long) Genre.fromString(genre).getId();
+        return tmdbApiService.searchMoviesByGenre(id);
+    }
+
+
+    /**
      * Movie 엔티티를 MovieDTO로 변환
      */
     public MovieDTO convertToMovieDTO (Movie movie) {
         return modelMapper.map(movie, MovieDTO.class);
     }
+
 
 }

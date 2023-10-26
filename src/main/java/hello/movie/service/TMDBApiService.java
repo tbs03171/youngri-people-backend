@@ -177,6 +177,29 @@ public class TMDBApiService {
 
 
     /**
+     * 장르로 영화 검색
+     */
+    public List<MovieListDTO> searchMoviesByGenre(Long id) {
+        // 요청 URL 생성
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
+                .path("/discover/movie")
+                .queryParam("api_key", KEY)
+                .queryParam("language", "ko-KR")
+                .queryParam("include_adult", "true")
+                .queryParam("include_video", "false")
+                .queryParam("page", 1)
+                .queryParam("sort_by", "popularity.desc")
+                .queryParam("with_genres", id);
+
+        // HTTP GET 요청
+        ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
+
+        // 영화 리스트 파싱해서 반환
+        return parseMovieList(response.getBody().get("results"));
+    }
+
+
+    /**
      * 영화 예고편 조회
      */
     public String getTrailerById(Long id) {
@@ -280,5 +303,4 @@ public class TMDBApiService {
         }
         return movieList;
     }
-
 }
