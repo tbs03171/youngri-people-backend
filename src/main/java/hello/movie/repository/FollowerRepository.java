@@ -18,10 +18,4 @@ public interface FollowerRepository extends JpaRepository<Follow, Long> {
     @Query("select f.followee from Follow f where f.follower in " +
             "(select m from Member m where m.id=:id)")
     Optional<List<Member>> findAllByFollower(@Param("id") Long id);
-
-    /*public List<Follow> findAllByFollowing(Long memberId){
-        return em.createQuery("select f from Follow f where f.followee= : memberId", Follow.class)
-                .setParameter("memberId", memberId)
-                .getResultList();
-    }*/
 }
