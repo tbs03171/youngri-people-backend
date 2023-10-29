@@ -1,6 +1,7 @@
 package hello.movie.controller;
 
-import hello.movie.dto.CreateMemberForm;
+import hello.movie.CustomResponse;
+import hello.movie.dto.CreateMemberDto;
 import hello.movie.dto.UpdateMemberDto;
 import hello.movie.model.Member;
 import hello.movie.service.MemberService;
@@ -21,65 +22,98 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/{memberId}")
-    public Member getMemberById(@PathVariable("memberId") Long memberId){
-        Member member = memberService.findById(memberId);
-        return member;
+    public ResponseEntity<CustomResponse> getMemberById(@PathVariable("memberId") Long memberId){
+        Optional<Member> member = memberService.findById(memberId);
+
+        CustomResponse response = CustomResponse.builder()
+                .message("memberId로 회원 조회 성공")
+                .data(member)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{memberId}")
-    public void updateMember(@PathVariable("memberId") Long memberId, @RequestBody UpdateMemberDto updateMemberDto){
-        memberService.update(memberId, updateMemberDto);
+    public ResponseEntity<CustomResponse> updateMember(@PathVariable("memberId") Long memberId, @RequestBody UpdateMemberDto updateMemberDto){
+        Member member = memberService.update(memberId, updateMemberDto);
+
+        CustomResponse response = CustomResponse.builder()
+                .message("회원 정보 수정 성공")
+                .data(member)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("")
-    public ResponseEntity<List<Member>> getAllMembers(){
-        List<Member> members = memberService.findMembers();
-        return ResponseEntity.ok(members);
+    public ResponseEntity<CustomResponse> getAllMembers(){
+        Optional<List<Member>> members = memberService.findMembers();
+
+        CustomResponse response = CustomResponse.builder()
+                .message("모든 멤버 조회 성공")
+                .data(members)
+                .build();
+        return ResponseEntity.ok(response);
+
     }
 
-    /*@GetMapping("/{id}")
-    public ResponseEntity<Member> getMemberById(@PathVariable Long id){
-        Member findMember = memberService.findOne(id);
-        return ResponseEntity.ok(findMember);
-    }*/
-
     @GetMapping("/search/nickname")
-    public List<Member> getMemberByNickname(@RequestParam("nickname") String nickname){
-        List<Member> findMembers = memberService.findByNickname(nickname);
-        return findMembers;
+    public ResponseEntity<CustomResponse> getMemberByNickname(@RequestParam("nickname") String nickname){
+        Optional<List<Member>> findMembers = memberService.findByNickname(nickname);
+
+        if(findMembers.isEmpty()){
+            CustomResponse response = CustomResponse.builder()
+                    .message("일치하는 닉네임이 없습니다.")
+                    .build();
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        CustomResponse response = CustomResponse.builder()
+                .message("닉네임으로 조회 성공")
+                .data(findMembers)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/search/email")
-    public ResponseEntity<?> getMemberByEmail(@RequestParam("email") String email){
+    public ResponseEntity<CustomResponse> getMemberByEmail(@RequestParam("email") String email){
         Optional<Member> findMember = memberService.findByEmail(email);
 
         if(findMember.isEmpty()){
-            return ResponseEntity.ok().build();
+            CustomResponse response = CustomResponse.builder()
+                    .message("일치하는 이메일이 없습니다.")
+                    .build();
+            return ResponseEntity.badRequest().body(response);
         }
 
-        return ResponseEntity.ok(findMember);
+        CustomResponse response = CustomResponse.builder()
+                .message("이메일로 조회 성공")
+                .data(findMember)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createMember(@RequestBody @Valid CreateMemberForm memberForm, BindingResult bindingResult){
+    public ResponseEntity<CustomResponse> createMember(@RequestBody @Valid CreateMemberDto memberDto, BindingResult bindingResult){
 
         if(bindingResult.hasErrors()){
-            return ResponseEntity
-                    .badRequest()
-                    .body(bindingResult.getAllErrors());
+            CustomResponse response = CustomResponse.builder()
+                    .message(bindingResult.getFieldError().getDefaultMessage())
+                    .build();
+            return ResponseEntity.badRequest().body(response);
         }
 
-        Member member = Member.builder()
-                .email(memberForm.getEmail())
-                .password(memberForm.getPassword())
-                .name(memberForm.getName())
-                .phoneNumber(memberForm.getPhoneNumber())
-                .gender(memberForm.getGender())
-                .birthDate(memberForm.getBirthDate())
-                .nickname(memberForm.getNickname())
-                .build();
+        Optional<Member> member = memberService.join(memberDto);
 
-        memberService.join(member);
-        return ResponseEntity.ok(member);
+        if(member.isEmpty()){
+            CustomResponse response = CustomResponse.builder()
+                    .message("이메일이 중복입니다.")
+                    .build();
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        CustomResponse response = CustomResponse.builder()
+                .message("회원가입 성공")
+                .data(member)
+                .build();
+        return ResponseEntity.ok(response);
     }
 }

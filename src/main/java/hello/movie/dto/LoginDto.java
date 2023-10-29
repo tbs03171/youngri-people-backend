@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class LoginForm {
+public class LoginDto {
 
     @Email
     private String email;

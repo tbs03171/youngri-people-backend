@@ -19,11 +19,11 @@ public class Follow {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "FOLLOWER_ID")
+    @JoinColumn(name = "FOLLOWER")
     private Member follower;
 
     @ManyToOne
-    @JoinColumn(name ="FOLLOWEE_ID")
+    @JoinColumn(name = "FOLLOWEE")
     private Member followee;
 
     @Temporal(TemporalType.DATE)

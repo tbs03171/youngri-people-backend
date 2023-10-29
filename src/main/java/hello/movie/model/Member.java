@@ -1,8 +1,11 @@
 package hello.movie.model;
 
+import hello.movie.dto.CreateMemberDto;
+import hello.movie.dto.UpdateMemberDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.ArrayList;
@@ -34,6 +37,7 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
 
+
     @Builder
     public Member(String email, String password, String name, String phoneNumber,
                   Gender gender, Date birthDate, String profilePath, String nickname,
@@ -49,9 +53,10 @@ public class Member {
         this.mbti = mbti;
     }
 
-    public void updateMember(String nickname, Mbti mbti, String profilePath){
-        this.nickname = nickname;
-        this.mbti = mbti;
-        this.profilePath = profilePath;
+    public Member updateMember(UpdateMemberDto memberDto){
+        this.nickname = memberDto.getNickname();
+        this.mbti = memberDto.getMbti();
+        this.profilePath = memberDto.getProfilePath();
+        return this;
     }
 }

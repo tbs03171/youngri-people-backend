@@ -9,7 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 @Data
-public class CreateMemberForm {
+public class CreateMemberDto {
 
     @Email
     private String email;
@@ -21,4 +21,7 @@ public class CreateMemberForm {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
     private String nickname;
+
+
+
 }
