@@ -8,32 +8,32 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Getter @Setter
-public class MovieDTO {
+public class MovieDto {
     private String title;
     private String overview;
     private LocalDate releaseDate;
     private float rating;
     private String posterPath;
     private String trailerPath;
-    private List<MovieGenreDTO> genres;
-    private List<MovieActorDTO> actors;
-    private List<MovieCrewDTO> crew;
+    private List<MovieGenreDto> genres;
+    private List<MovieActorDto> actors;
+    private List<MovieCrewDto> crew;
 }
 
 @Getter @Setter
-class MovieGenreDTO {
+class MovieGenreDto {
     private Genre genre;
 }
 
 @Getter @Setter
-class MovieActorDTO {
+class MovieActorDto {
     private String name;
     private String character;
     private String profilePath;
 }
 
 @Getter @Setter
-class MovieCrewDTO {
+class MovieCrewDto {
     private String name;
     private String character;
     private String profilePath;

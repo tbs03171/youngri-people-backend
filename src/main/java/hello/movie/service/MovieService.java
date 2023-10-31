@@ -3,8 +3,8 @@ package hello.movie.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import hello.movie.domain.Genre;
 import hello.movie.domain.Movie;
-import hello.movie.dto.MovieDTO;
-import hello.movie.dto.MovieListDTO;
+import hello.movie.dto.MovieDto;
+import hello.movie.dto.MovieListDto;
 import hello.movie.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,16 +24,16 @@ public class MovieService {
     /**
      * 영화 상세 정보 조회
      */
-    public MovieDTO getMovieById(Long id) throws JsonProcessingException {
+    public MovieDto getMovieById(Long id) throws JsonProcessingException {
         Optional<Movie> movieOptional = movieRepository.findById(id);
         if (movieOptional.isPresent()) { // 영화 정보가 DB에 있는 경우
             Movie movie = movieOptional.get();
-            MovieDTO movieDTO = convertToMovieDTO(movie);
+            MovieDto movieDTO = convertToMovieDTO(movie);
             return movieDTO;
         } else { // 영화 정보가 DB에 없는 경우
             Movie movie = tmdbApiService.getMovieById(id);
             movieRepository.save(movie);
-            MovieDTO movieDTO = convertToMovieDTO(movie);
+            MovieDto movieDTO = convertToMovieDTO(movie);
             return movieDTO;
         }
     }
@@ -41,7 +41,7 @@ public class MovieService {
     /**
      * 현재 상영중인 영화 조회
      */
-    public List<MovieListDTO> getNowPlayingMovies() {
+    public List<MovieListDto> getNowPlayingMovies() {
         return tmdbApiService.getNowPlayingMovies();
     }
 
@@ -49,7 +49,7 @@ public class MovieService {
     /**
      * 인기 있는 영화 조회
      */
-    public List<MovieListDTO> getPopularMovies() {
+    public List<MovieListDto> getPopularMovies() {
         return tmdbApiService.getPopularMovies();
     }
 
@@ -57,7 +57,7 @@ public class MovieService {
     /**
      * 평점 높은 영화 조회
      */
-    public List<MovieListDTO> getTopRatedMovies() {
+    public List<MovieListDto> getTopRatedMovies() {
         return tmdbApiService.getTopRatedMovies();
     }
 
@@ -65,7 +65,7 @@ public class MovieService {
     /**
      * 개봉 예정인 영화 조회
      */
-    public List<MovieListDTO> getUpcomingMovies() {
+    public List<MovieListDto> getUpcomingMovies() {
         return tmdbApiService.getUpcomingMovies();
     }
 
@@ -73,7 +73,7 @@ public class MovieService {
     /**
      * 제목으로 영화 검색
      */
-    public List<MovieListDTO> searchMoviesByTitle(String title) {
+    public List<MovieListDto> searchMoviesByTitle(String title) {
         return tmdbApiService.searchMoviesByTitle(title);
     }
 
@@ -81,7 +81,7 @@ public class MovieService {
     /**
      * 스탭 또는 배우 이름으로 영화 검색
      */
-    public List<MovieListDTO> searchMoviesByPerson(String name) {
+    public List<MovieListDto> searchMoviesByPerson(String name) {
         return tmdbApiService.searchMoviesByPerson(name);
     }
 
@@ -89,7 +89,7 @@ public class MovieService {
     /**
      * 장르로 영화 검색
      */
-    public List<MovieListDTO> searchMoviesByGenre(String genre) {
+    public List<MovieListDto> searchMoviesByGenre(String genre) {
         Long id = (Long) Genre.fromString(genre).getId();
         return tmdbApiService.searchMoviesByGenre(id);
     }
@@ -98,8 +98,8 @@ public class MovieService {
     /**
      * Movie 엔티티를 MovieDTO로 변환
      */
-    public MovieDTO convertToMovieDTO (Movie movie) {
-        return modelMapper.map(movie, MovieDTO.class);
+    public MovieDto convertToMovieDTO (Movie movie) {
+        return modelMapper.map(movie, MovieDto.class);
     }
 
 

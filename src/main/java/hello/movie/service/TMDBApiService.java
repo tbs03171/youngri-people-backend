@@ -3,7 +3,7 @@ package hello.movie.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import hello.movie.domain.*;
-import hello.movie.dto.MovieListDTO;
+import hello.movie.dto.MovieListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +57,7 @@ public class TMDBApiService {
     /**
      * 현재 상영중인 영화 조회
      */
-    public List<MovieListDTO> getNowPlayingMovies() {
+    public List<MovieListDto> getNowPlayingMovies() {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/movie/now_playing")
@@ -77,7 +77,7 @@ public class TMDBApiService {
     /**
      * 인기 있는 영화 조회
      */
-    public List<MovieListDTO> getPopularMovies() {
+    public List<MovieListDto> getPopularMovies() {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/movie/popular")
@@ -97,7 +97,7 @@ public class TMDBApiService {
     /**
      * 평점 높은 영화 조회
      */
-    public List<MovieListDTO> getTopRatedMovies() {
+    public List<MovieListDto> getTopRatedMovies() {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/movie/top_rated")
@@ -117,7 +117,7 @@ public class TMDBApiService {
     /**
      * 개봉 예정인 영화 조회
      */
-    public List<MovieListDTO> getUpcomingMovies() {
+    public List<MovieListDto> getUpcomingMovies() {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/movie/upcoming")
@@ -137,7 +137,7 @@ public class TMDBApiService {
     /**
      * 제목으로 영화 검색
      */
-    public List<MovieListDTO> searchMoviesByTitle(String title) {
+    public List<MovieListDto> searchMoviesByTitle(String title) {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/search/movie")
@@ -158,7 +158,7 @@ public class TMDBApiService {
     /**
      * 스탭 또는 배우 이름으로 영화 검색
      */
-    public List<MovieListDTO> searchMoviesByPerson(String name) {
+    public List<MovieListDto> searchMoviesByPerson(String name) {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/search/person")
@@ -179,7 +179,7 @@ public class TMDBApiService {
     /**
      * 장르로 영화 검색
      */
-    public List<MovieListDTO> searchMoviesByGenre(Long id) {
+    public List<MovieListDto> searchMoviesByGenre(Long id) {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/discover/movie")
@@ -292,10 +292,10 @@ public class TMDBApiService {
 
 
     // 영화 리스트 파싱
-    private List<MovieListDTO> parseMovieList(JsonNode movies) {
-        List<MovieListDTO> movieList = new ArrayList<>();
+    private List<MovieListDto> parseMovieList(JsonNode movies) {
+        List<MovieListDto> movieList = new ArrayList<>();
         for (JsonNode movie : movies) {
-            MovieListDTO movieListDTO = new MovieListDTO();
+            MovieListDto movieListDTO = new MovieListDto();
             movieListDTO.setId(movie.get("id").asLong());
             movieListDTO.setTitle(movie.get("title").asText());
             movieListDTO.setPosterPath(IMAGE_BASE_URL + movie.get("poster_path").asText());

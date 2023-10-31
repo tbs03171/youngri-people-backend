@@ -1,8 +1,8 @@
 package hello.movie.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import hello.movie.dto.MovieDTO;
-import hello.movie.dto.MovieListDTO;
+import hello.movie.dto.MovieDto;
+import hello.movie.dto.MovieListDto;
 import hello.movie.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -18,33 +18,33 @@ public class MovieController {
     private final MovieService movieService;
 
     @GetMapping("/{id}")
-    public MovieDTO getMovieDetails(@PathVariable Long id) throws JsonProcessingException {
+    public MovieDto getMovieDetails(@PathVariable Long id) throws JsonProcessingException {
         return movieService.getMovieById(id);
     }
 
     @GetMapping("/now-playing")
-    public List<MovieListDTO> getNowPlayingMovies() {
+    public List<MovieListDto> getNowPlayingMovies() {
         return movieService.getNowPlayingMovies();
     }
 
     @GetMapping("/popular")
-    public List<MovieListDTO> getPopularMovies() {
+    public List<MovieListDto> getPopularMovies() {
         return movieService.getPopularMovies();
     }
 
     @GetMapping("/top-rated")
-    public List<MovieListDTO> getTopRatedMovies() {
+    public List<MovieListDto> getTopRatedMovies() {
         return movieService.getTopRatedMovies();
     }
 
     @GetMapping("/upcoming")
-    public List<MovieListDTO> getUpcomingMovies() {
+    public List<MovieListDto> getUpcomingMovies() {
         return movieService.getUpcomingMovies();
     }
 
 
     @GetMapping("/search")
-    public List<MovieListDTO> searchMovies(
+    public List<MovieListDto> searchMovies(
             @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "person", required = false) String person,
             @RequestParam(name = "genre", required = false) String genre
