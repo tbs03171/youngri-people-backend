@@ -1,4 +1,4 @@
-package hello.movie.domain;
+package hello.movie.model;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -7,18 +7,26 @@ import lombok.Getter;
 @Entity
 @Builder
 @Getter
-public class MovieGenre {
+public class MovieCrew {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "MOVIE_GENRE_ID")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private Genre genre;
+    private Long tmdbId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MOVIE_ID")
     private Movie movie;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "CREW_ID")
+//    private Crew crew;
+
+    private String name;
+
+    private String character;
+
+    private String profilePath;
 
     public void setMovie(Movie movie) {
         this.movie = movie;

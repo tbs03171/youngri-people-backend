@@ -1,4 +1,4 @@
-package hello.movie.domain;
+package hello.movie.model;
 
 public enum Genre {
     ACTION(28),

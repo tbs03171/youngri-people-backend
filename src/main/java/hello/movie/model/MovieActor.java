@@ -1,4 +1,4 @@
-package hello.movie.domain;
+package hello.movie.model;
 
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -7,9 +7,10 @@ import lombok.Getter;
 @Entity
 @Builder
 @Getter
-public class MovieCrew {
+public class MovieActor {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MOVIE_ACTOR_ID")
     private Long id;
 
     private Long tmdbId;
@@ -18,17 +19,21 @@ public class MovieCrew {
     @JoinColumn(name = "MOVIE_ID")
     private Movie movie;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "CREW_ID")
-//    private Crew crew;
-
     private String name;
 
     private String character;
 
     private String profilePath;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "ACTOR_ID")
+//    private Actor actor;
+
     public void setMovie(Movie movie) {
         this.movie = movie;
     }
+
+    //    public void setActor(Actor actor) {
+//        this.actor = actor;
+//    }
 }

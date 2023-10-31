@@ -1,4 +1,4 @@
-package hello.movie.domain;
+package hello.movie.model;
 
 import jakarta.persistence.*;
 import lombok.*;

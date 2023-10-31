@@ -1,6 +1,6 @@
 package hello.movie.dto;
 
-import hello.movie.domain.Genre;
+import hello.movie.model.Genre;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,8 +1,8 @@
 package hello.movie.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import hello.movie.domain.Genre;
-import hello.movie.domain.Movie;
+import hello.movie.model.Genre;
+import hello.movie.model.Movie;
 import hello.movie.dto.MovieDto;
 import hello.movie.dto.MovieListDto;
 import hello.movie.repository.MovieRepository;

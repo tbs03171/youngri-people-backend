@@ -1,6 +1,5 @@
-package hello.movie.domain;
+package hello.movie.model;
 
-import hello.movie.model.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
