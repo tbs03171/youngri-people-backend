@@ -11,7 +11,6 @@ import java.util.Collection;
 public class PrincipalDetails implements UserDetails {
 
     private  Member member;
-
     public PrincipalDetails(Member member) {
         this.member = member;
     }

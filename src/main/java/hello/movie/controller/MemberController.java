@@ -1,6 +1,7 @@
 package hello.movie.controller;
 
 import hello.movie.CustomResponse;
+import hello.movie.auth.PrincipalDetails;
 import hello.movie.dto.MemberDto.CreateMemberDto;
 import hello.movie.dto.MemberDto.MyPageMemberInfoDto;
 import hello.movie.dto.MemberDto.SearchMemberDto;
@@ -10,6 +11,8 @@ import hello.movie.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,8 +28,11 @@ public class MemberController {
     private final MemberService memberService;
 
     //내 마이페이지 정보
-    @GetMapping("/{memberId}")
-    public ResponseEntity<CustomResponse> getMemberById(@PathVariable("memberId") Long memberId){
+    @GetMapping("")
+    public ResponseEntity<CustomResponse> getMemberById(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = ((PrincipalDetails) authentication.getPrincipal()).getMember().getId();
+
         Member member = memberService.findById(memberId).get();
 
         MyPageMemberInfoDto myPageMemberInfoDto = createMyPageMemberInfoDto(member);
@@ -39,8 +45,11 @@ public class MemberController {
     }
 
     //내 정보 업데이트
-    @PutMapping("/{memberId}")
-    public ResponseEntity<CustomResponse> updateMember(@PathVariable("memberId") Long memberId, @RequestBody UpdateMemberDto updateMemberDto){
+    @PutMapping("")
+    public ResponseEntity<CustomResponse> updateMember(@RequestBody UpdateMemberDto updateMemberDto){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long memberId = ((PrincipalDetails) authentication.getPrincipal()).getMember().getId();
+
         Member member = memberService.update(memberId, updateMemberDto);
 
         MyPageMemberInfoDto myPageMemberInfoDto = createMyPageMemberInfoDto(member);
@@ -62,7 +71,7 @@ public class MemberController {
     }
 
     //커뮤니티 화면에서 사용자 전체 보기
-    @GetMapping("")
+    @GetMapping("/search")
     public ResponseEntity<CustomResponse> getAllMembers(){
         Optional<List<Member>> members = memberService.findMembers();
 
