@@ -1,16 +1,11 @@
 package hello.movie.model;
 
-import hello.movie.dto.CreateMemberDto;
-import hello.movie.dto.UpdateMemberDto;
+import hello.movie.dto.MemberDto.UpdateMemberDto;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -21,7 +16,7 @@ public class Member {
     @GeneratedValue
     @Column(name = "MEMBER_ID")
     private Long id;
-    private String email;
+    private String userId;
     private String password;
     private String name;
     private String phoneNumber;
@@ -39,10 +34,10 @@ public class Member {
 
 
     @Builder
-    public Member(String email, String password, String name, String phoneNumber,
+    public Member(String userId, String password, String name, String phoneNumber,
                   Gender gender, Date birthDate, String profilePath, String nickname,
                   Mbti mbti) {
-        this.email = email;
+        this.userId = userId;
         this.password = password;
         this.name = name;
         this.phoneNumber = phoneNumber;
@@ -54,9 +49,9 @@ public class Member {
     }
 
     public Member updateMember(UpdateMemberDto memberDto){
-        this.nickname = memberDto.getNickname();
-        this.mbti = memberDto.getMbti();
-        this.profilePath = memberDto.getProfilePath();
+        Optional.ofNullable(memberDto.getNickname()).ifPresent(nickname -> this.nickname = nickname);
+        Optional.ofNullable(memberDto.getMbti()).ifPresent(mbti -> this.mbti = mbti);
+        Optional.ofNullable(memberDto.getProfilePath()).ifPresent(profilePath -> this.profilePath = profilePath);
         return this;
     }
 }

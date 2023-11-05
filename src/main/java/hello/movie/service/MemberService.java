@@ -1,11 +1,12 @@
 package hello.movie.service;
 
-import hello.movie.dto.CreateMemberDto;
-import hello.movie.dto.UpdateMemberDto;
+import hello.movie.dto.MemberDto.CreateMemberDto;
+import hello.movie.dto.MemberDto.UpdateMemberDto;
 import hello.movie.model.Member;
 import hello.movie.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,22 +20,19 @@ import java.util.Optional;
 @Slf4j
 public class MemberService {
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MemberRepository memberRepository;
 
     //회원 가입
     @Transactional
     public Optional<Member> join(CreateMemberDto memberDto) {
+        Optional<Member> findMember = memberRepository.findByUserId(memberDto.getUserId());
 
-        Optional<Member> findMember = findByEmail(memberDto.getEmail());
-        try {
-            if (findMember.isEmpty()) {
-                Member member = createMemberDtotoMember(memberDto);
-                memberRepository.save(member);
-                return Optional.of(member);
-            } else {
-                return Optional.empty();
-            }
-        }catch (NoSuchElementException e){
+        if (findMember.isEmpty()) {
+            Member member = createMemberDtotoMember(memberDto);
+            memberRepository.save(member);
+            return Optional.of(member);
+        } else {
             return Optional.empty();
         }
     }
@@ -63,14 +61,14 @@ public class MemberService {
     }
 
     //회원 email로 조회
-    public Optional<Member> findByEmail(String email) {
-        return memberRepository.findByEmail(email);
+    public Optional<Member> findByUserId(String userId) {
+        return memberRepository.findByUserId(userId);
     }
 
     public Member createMemberDtotoMember(CreateMemberDto memberDto) {
             Member member = Member.builder()
-                    .email(memberDto.getEmail())
-                    .password(memberDto.getPassword())
+                    .userId(memberDto.getUserId())
+                    .password(bCryptPasswordEncoder.encode(memberDto.getPassword()))
                     .name(memberDto.getName())
                     .phoneNumber(memberDto.getPhoneNumber())
                     .gender(memberDto.getGender())

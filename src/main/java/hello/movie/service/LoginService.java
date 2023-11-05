@@ -19,15 +19,12 @@ public class LoginService {
     private final MemberRepository memberRepository;
 
     //로그인
-    public Optional<Member> login(String email, String password) {
-        Optional<Member> member = memberRepository.findByEmail(email);
-        try {
-            if (member.get().getPassword().equals(password))
-                return member;
-            else
-                return Optional.empty();
-        }catch(NoSuchElementException e){
+    public Optional<Member> login(String userId, String password) {
+        Optional<Member> member = memberRepository.findByUserId(userId);
+
+        if (member.get().getPassword().equals(password))
+            return member;
+        else
             return Optional.empty();
-        }
     }
 }
