@@ -1,10 +1,12 @@
 package hello.movie.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import hello.movie.CustomResponse;
 import hello.movie.dto.MovieDto;
 import hello.movie.dto.MovieListDto;
 import hello.movie.service.MovieService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -17,66 +19,89 @@ public class MovieController {
 
     private final MovieService movieService;
 
-    @GetMapping("/{id}")
-    public MovieDto getMovieDetails(@PathVariable Long id) throws JsonProcessingException {
-        return movieService.getMovieById(id);
+
+    @GetMapping("/{movieId}")
+    public ResponseEntity<CustomResponse> getMovieDetails(@PathVariable Long movieId) throws JsonProcessingException {
+        MovieDto movieDto = movieService.getMovieById(movieId);
+
+        CustomResponse response = CustomResponse.builder()
+                .message("movieId로 영화 조회 성공")
+                .data(movieDto)
+                .build();
+        return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/now-playing")
-    public List<MovieListDto> getNowPlayingMovies() {
-        return movieService.getNowPlayingMovies();
+    public ResponseEntity<CustomResponse> getNowPlayingMovies() {
+        List<MovieListDto> movieListDto = movieService.getNowPlayingMovies();
+
+        CustomResponse response = CustomResponse.builder()
+                .message("현재 상영중인 영화 목록 조회 성공")
+                .data(movieListDto)
+                .build();
+        return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/popular")
-    public List<MovieListDto> getPopularMovies() {
-        return movieService.getPopularMovies();
+    public ResponseEntity<CustomResponse> getPopularMovies() {
+        List<MovieListDto> movieListDto = movieService.getPopularMovies();
+
+        CustomResponse response = CustomResponse.builder()
+                .message("인기 많은 영화 목록 조회 성공")
+                .data(movieListDto)
+                .build();
+        return ResponseEntity.ok(response);
     }
+
 
     @GetMapping("/top-rated")
-    public List<MovieListDto> getTopRatedMovies() {
-        return movieService.getTopRatedMovies();
+    public ResponseEntity<CustomResponse> getTopRatedMovies() {
+        List<MovieListDto> movieListDto = movieService.getTopRatedMovies();
+
+        CustomResponse response = CustomResponse.builder()
+                .message("평점 높은 영화 목록 조회 성공")
+                .data(movieListDto)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
+
     @GetMapping("/upcoming")
-    public List<MovieListDto> getUpcomingMovies() {
-        return movieService.getUpcomingMovies();
+    public ResponseEntity<CustomResponse> getUpcomingMovies() {
+        List<MovieListDto> movieListDto = movieService.getUpcomingMovies();
+
+        CustomResponse response = CustomResponse.builder()
+                .message("개봉 예정인 영화 목록 조회 성공")
+                .data(movieListDto)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
 
     @GetMapping("/search")
-    public List<MovieListDto> searchMovies(
+    public ResponseEntity<CustomResponse> searchMovies(
             @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "person", required = false) String person,
             @RequestParam(name = "genre", required = false) String genre
     ) {
+        List<MovieListDto> movieListDto;
         if (title != null) {
             // 제목으로 영화 검색
-            return movieService.searchMoviesByTitle(title);
+            movieListDto = movieService.searchMoviesByTitle(title);
         } else if (person != null) {
             // 배우나 감독으로 영화 검색
-            return movieService.searchMoviesByPerson(person);
-        } else if (genre != null) {
-            // 장르로 영화 검색
-            return movieService.searchMoviesByGenre(genre);
+            movieListDto = movieService.searchMoviesByPerson(person);
         } else {
-            // 파라미터 지정하지 않은 경우
-            return Collections.emptyList();
+            // 장르로 영화 검색
+            movieListDto = movieService.searchMoviesByGenre(genre);
         }
-    }
 
-    // 엔드포인트 분리
-//    @GetMapping("/search/title")
-//    public List<MovieListDTO> searchMoviesByTitle(@RequestParam("title") String title) {
-//        return movieService.searchMoviesByTitle(title);
-//    }
-//
-//    @GetMapping("/search/person")
-//    public List<MovieListDTO> searchMoviesByPerson(@RequestParam("name") String name) {
-//        return movieService.searchMoviesByPerson(name);
-//    }
-//
-//    @GetMapping("/search/genre")
-//    public List<MovieListDTO> searchMoviesByGenre(@RequestParam("genre") String genre) {
-//        return movieService.searchMoviesByGenre(genre);
-//    }
+        CustomResponse response = CustomResponse.builder()
+                .message("검색 성공")
+                .data(movieListDto)
+                .build();
+        return ResponseEntity.ok(response);
+    }
 }

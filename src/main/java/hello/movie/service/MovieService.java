@@ -24,19 +24,14 @@ public class MovieService {
     /**
      * 영화 상세 정보 조회
      */
-    public MovieDto getMovieById(Long id) throws JsonProcessingException {
-        Optional<Movie> movieOptional = movieRepository.findById(id);
-        if (movieOptional.isPresent()) { // 영화 정보가 DB에 있는 경우
-            Movie movie = movieOptional.get();
-            MovieDto movieDTO = convertToMovieDTO(movie);
-            return movieDTO;
-        } else { // 영화 정보가 DB에 없는 경우
-            Movie movie = tmdbApiService.getMovieById(id);
-            movieRepository.save(movie);
-            MovieDto movieDTO = convertToMovieDTO(movie);
-            return movieDTO;
+    public MovieDto getMovieById(Long movieId) throws JsonProcessingException {
+        if (!movieRepository.existsByTmdbId(movieId)) { // 영화 정보가 DB에 없는 경우 TMDB에서 가져와서 저장
+            movieRepository.save(tmdbApiService.getMovieById(movieId));
         }
+        Movie movie = movieRepository.findByTmdbId(movieId).get();
+        return convertToMovieDto(movie);
     }
+
 
     /**
      * 현재 상영중인 영화 조회
@@ -96,11 +91,10 @@ public class MovieService {
 
 
     /**
-     * Movie 엔티티를 MovieDTO로 변환
+     * Movie 엔티티를 MovieDto로 변환
      */
-    public MovieDto convertToMovieDTO (Movie movie) {
+    public MovieDto convertToMovieDto(Movie movie) {
         return modelMapper.map(movie, MovieDto.class);
     }
-
 
 }

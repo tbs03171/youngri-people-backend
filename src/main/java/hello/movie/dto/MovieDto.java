@@ -12,7 +12,7 @@ public class MovieDto {
     private String title;
     private String overview;
     private LocalDate releaseDate;
-    private float rating;
+    private Double rating;
     private String posterPath;
     private String trailerPath;
     private List<MovieGenreDto> genres;
