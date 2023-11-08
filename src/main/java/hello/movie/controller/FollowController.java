@@ -5,6 +5,7 @@ import hello.movie.model.Follow;
 import hello.movie.model.Member;
 import hello.movie.service.FollowerService;
 import hello.movie.service.MemberService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 @RestController
+@RequestMapping("/api")
 public class FollowController {
 
     private final FollowerService followerService;

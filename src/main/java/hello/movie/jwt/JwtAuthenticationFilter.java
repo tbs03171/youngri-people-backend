@@ -27,6 +27,7 @@ import java.util.Date;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
@@ -45,10 +46,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             //authentication 객체가 session영역에 저장됨. => 로그인이 되었다는 뜻.
             PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
-            System.out.println("로그인 완료됨 "+principalDetails.getMember().getUserId());
+            System.out.println("로그인 완료됨 " + principalDetails.getMember().getUserId());
 
             return authentication;
-        }catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
@@ -69,7 +70,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         //RSA방식은 아니고 Hash암호방식
         String jwtToken = JWT.create()
                 .withSubject(JwtProperties.SECRET)
-                .withExpiresAt(new Date(System.currentTimeMillis()+JwtProperties.EXPIRATION_TIME))
+                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
                 .withClaim("id", principalDetails.getMember().getId())
                 .withClaim("userId", principalDetails.getMember().getUserId())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
@@ -80,4 +81,3 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         response.getWriter().write("{\"message\":\"로그인 성공\"}");
     }
 }
-

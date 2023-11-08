@@ -4,6 +4,7 @@ import hello.movie.CustomResponse;
 import hello.movie.dto.CreateBookMarkDto;
 import hello.movie.model.BookMark;
 import hello.movie.service.BookMarkService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 @RestController
+@RequestMapping("/api")
 public class BookMarkController {
 
     private final BookMarkService bookMarkService;

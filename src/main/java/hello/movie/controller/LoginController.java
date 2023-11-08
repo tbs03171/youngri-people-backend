@@ -1,38 +1,47 @@
 package hello.movie.controller;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import hello.movie.CustomResponse;
+import hello.movie.auth.PrincipalDetails;
 import hello.movie.dto.LoginDto;
+import hello.movie.jwt.JwtProperties;
 import hello.movie.model.Member;
 import hello.movie.service.LoginService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@SecurityRequirement(name = "Bearer Authentication")
 @RestController
 public class LoginController {
 
     private final LoginService loginService;
 
     //로그인 서버 검증 처리 다시
+    //로그인 하기
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "404", description = "서버 검증으로 실패"),
             @ApiResponse(responseCode = "400", description = "validation 오류로 실패")})
     @PostMapping("/login")
-    public ResponseEntity<CustomResponse> login(@RequestBody @Valid LoginDto loginDto, BindingResult bindingResult, Authentication authentication){
+    public ResponseEntity<CustomResponse> login(@RequestBody @Valid LoginDto loginDto, BindingResult bindingResult) {
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             CustomResponse response = CustomResponse.builder()
                     .message(bindingResult.getFieldError().getDefaultMessage())
                     .build();
@@ -41,7 +50,7 @@ public class LoginController {
 
         Optional<Member> loginMember = loginService.login(loginDto.getUserId(), loginDto.getPassword());
 
-        if(loginMember.isEmpty()){
+        if (loginMember.isEmpty()) {
             CustomResponse response = CustomResponse.builder()
                     .message("아이디 또는 비밀번호가 맞지 않습니다.")
                     .build();
@@ -52,7 +61,24 @@ public class LoginController {
         CustomResponse response = CustomResponse.builder()
                 .message("로그인 성공")
                 .build();
-
         return ResponseEntity.ok(response);
+    }
+
+    //로그아웃 하기
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+
+        String jwtToken = JWT.create()
+                .withSubject(JwtProperties.SECRET)
+                .withExpiresAt(new Date(System.currentTimeMillis()))
+                .withClaim("id", principalDetails.getMember().getId())
+                .withClaim("userId", principalDetails.getMember().getUserId())
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+
+        return ResponseEntity
+                .ok()
+                .header(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken)
+                .body("로그아웃 성공");
+
     }
 }

@@ -1,11 +1,13 @@
 package hello.movie.service;
 
+import hello.movie.CustomResponse;
 import hello.movie.dto.MemberDto.CreateMemberDto;
 import hello.movie.dto.MemberDto.UpdateMemberDto;
 import hello.movie.model.Member;
 import hello.movie.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
