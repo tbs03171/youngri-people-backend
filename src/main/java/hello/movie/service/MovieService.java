@@ -9,6 +9,7 @@ import hello.movie.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +25,7 @@ public class MovieService {
     /**
      * 영화 상세 정보 조회
      */
+    @Transactional
     public MovieDto getMovieById(Long movieId) throws JsonProcessingException {
         if (!movieRepository.existsByTmdbId(movieId)) { // 영화 정보가 DB에 없는 경우 TMDB에서 가져와서 저장
             movieRepository.save(tmdbApiService.getMovieById(movieId));
