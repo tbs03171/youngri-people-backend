@@ -2,11 +2,13 @@ package hello.movie.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import hello.movie.CustomResponse;
+import hello.movie.auth.PrincipalDetails;
 import hello.movie.dto.MovieDto;
 import hello.movie.dto.MovieListDto;
 import hello.movie.service.MovieService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -21,7 +23,9 @@ public class MovieController {
 
 
     @GetMapping("/{movieId}")
-    public ResponseEntity<CustomResponse> getMovieDetails(@PathVariable Long movieId) throws JsonProcessingException {
+    public ResponseEntity<CustomResponse> getMovieDetails(@AuthenticationPrincipal PrincipalDetails principalDetails) throws JsonProcessingException {
+        Long movieId = principalDetails.getMember().getId();
+
         MovieDto movieDto = movieService.getMovieById(movieId);
 
         CustomResponse response = CustomResponse.builder()
