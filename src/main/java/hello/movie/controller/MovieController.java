@@ -6,6 +6,7 @@ import hello.movie.auth.PrincipalDetails;
 import hello.movie.dto.MovieDto;
 import hello.movie.dto.MovieListDto;
 import hello.movie.service.MovieService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,7 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 @RestController
-@RequestMapping("/movies")
+@SecurityRequirement(name = "Bearer Authentication")
+@RequestMapping("/api/movies")
 @RequiredArgsConstructor
 public class MovieController {
 
