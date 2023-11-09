@@ -13,7 +13,8 @@ import java.util.Optional;
 @Repository
 public interface FollowerRepository extends JpaRepository<Follow, Long> {
 
-
+    Follow save(Follow follow);
+    void delete(Follow follow);
     Follow findByFollowerAndFollowee(Member follower, Member followee);
     @Query("select f.followee from Follow f where f.follower in " +
             "(select m from Member m where m.id=:id)")
