@@ -1,12 +1,14 @@
 package hello.movie.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Builder
+@NoArgsConstructor
 public class MemberPreferredGenre {
 
     @Id
@@ -20,4 +22,10 @@ public class MemberPreferredGenre {
 
     @Enumerated(EnumType.STRING)
     private Genre genre;
+
+    @Builder
+    public MemberPreferredGenre(Member member, Genre genre) {
+        this.member = member;
+        this.genre = genre;
+    }
 }

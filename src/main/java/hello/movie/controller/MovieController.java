@@ -25,9 +25,7 @@ public class MovieController {
 
 
     @GetMapping("/{movieId}")
-    public ResponseEntity<CustomResponse> getMovieDetails(@AuthenticationPrincipal PrincipalDetails principalDetails) throws JsonProcessingException {
-        Long movieId = principalDetails.getMember().getId();
-
+    public ResponseEntity<CustomResponse> getMovieDetails(@PathVariable Long movieId) throws JsonProcessingException {
         MovieDto movieDto = movieService.getMovieById(movieId);
 
         CustomResponse response = CustomResponse.builder()
