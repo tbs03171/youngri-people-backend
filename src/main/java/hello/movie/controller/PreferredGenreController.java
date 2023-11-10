@@ -37,28 +37,28 @@ public class PreferredGenreController {
     }
 
     /**
-     * 선호 장르 추가
+     * 선호 장르 업데이트
      */
-    @PostMapping("")
-    public ResponseEntity<CustomResponse> addPreferredGenre(@RequestBody Long genreId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+    @PutMapping("")
+    public ResponseEntity<CustomResponse> updatePreferredGenre(@RequestBody List<Long> genreIds, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long memberId = principalDetails.getMember().getId();
-        preferredGenreService.addPreferredGenre(memberId, genreId);
+        preferredGenreService.updatePreferredGenre(memberId, genreIds);
         CustomResponse response = CustomResponse.builder()
-                .message("선호 장르 추가 성공")
+                .message("선호 장르 업데이트 성공")
                 .build();
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * 선호 장르 삭제
-     */
-    @DeleteMapping("")
-    public ResponseEntity<CustomResponse> removePreferredGenre(@RequestBody Long genreId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
-        Long memberId = principalDetails.getMember().getId();
-        preferredGenreService.removePreferredGenre(memberId, genreId);
-        CustomResponse response = CustomResponse.builder()
-                .message("선호 장르 삭제 성공")
-                .build();
-        return ResponseEntity.ok(response);
-    }
+//    /**
+//     * 선호 장르 삭제
+//     */
+//    @DeleteMapping("")
+//    public ResponseEntity<CustomResponse> removePreferredGenre(@RequestBody Long genreId, @AuthenticationPrincipal PrincipalDetails principalDetails) {
+//        Long memberId = principalDetails.getMember().getId();
+//        preferredGenreService.removePreferredGenre(memberId, genreId);
+//        CustomResponse response = CustomResponse.builder()
+//                .message("선호 장르 삭제 성공")
+//                .build();
+//        return ResponseEntity.ok(response);
+//    }
 }
