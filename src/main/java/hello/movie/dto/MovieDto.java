@@ -28,6 +28,7 @@ class MovieGenreDto {
 @Getter @Setter
 class MovieActorDto {
     private String name;
+    private Long tmdbId;
     private String character;
     private String profilePath;
 }
@@ -35,6 +36,7 @@ class MovieActorDto {
 @Getter @Setter
 class MovieCrewDto {
     private String name;
+    private Long tmdbId;
     private String character;
     private String profilePath;
 }

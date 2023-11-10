@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,31 +39,36 @@ public class PreferredGenreService {
     }
 
     /**
-     * 선호 장르 추가
+     * 선호 장르 업데이트
      */
     @Transactional
-    public void addPreferredGenre(Long memberId, Long genreId) {
+    public void updatePreferredGenre(Long memberId, List<Long> genreIds) {
+        // 기존 선호 장르 모두 삭제
         Member member = memberRepository.findById(memberId).get();
-        preferredGenreRepository.save(
-                MemberPreferredGenre.builder()
-                        .genre(Genre.fromId(genreId))
-                        .member(member)
-                        .build());
+        preferredGenreRepository.deleteByMember(member);
+
+        // 새로운 선호 장르로 업데이트
+        for (Long genreId : genreIds) {
+            preferredGenreRepository.save(MemberPreferredGenre.builder()
+                    .genre(Genre.fromId(genreId))
+                    .member(member)
+                    .build());
+        }
     }
 
-    /**
-     * 선호 장르 삭제
-     */
-    @Transactional
-    public void removePreferredGenre(Long memberId, Long genreId) {
-        // 멤버 가져와서
-        Member member = memberRepository.findById(memberId).get();
-
-        // 선호하는 장르인지 확인
-        Optional<MemberPreferredGenre> memberPreferredGenre = preferredGenreRepository.findByMemberAndGenre(member, Genre.fromId(genreId));
-
-        // 선호 장르 삭제
-        if (memberPreferredGenre.isPresent()) preferredGenreRepository.delete(memberPreferredGenre.get());
-    }
+//    /**
+//     * 선호 장르 삭제
+//     */
+//    @Transactional
+//    public void removePreferredGenre(Long memberId, Long genreId) {
+//        // 멤버 가져와서
+//        Member member = memberRepository.findById(memberId).get();
+//
+//        // 선호하는 장르인지 확인
+//        Optional<MemberPreferredGenre> memberPreferredGenre = preferredGenreRepository.findByMemberAndGenre(member, Genre.fromId(genreId));
+//
+//        // 선호 장르 삭제
+//        if (memberPreferredGenre.isPresent()) preferredGenreRepository.delete(memberPreferredGenre.get());
+//    }
 
 }
