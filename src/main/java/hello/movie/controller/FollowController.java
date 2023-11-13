@@ -1,29 +1,30 @@
 package hello.movie.controller;
 
 import hello.movie.CustomResponse;
-import hello.movie.model.Follow;
-import hello.movie.model.Member;
+import hello.movie.auth.PrincipalDetails;
+import hello.movie.dto.FollowResponseDto;
 import hello.movie.service.FollowerService;
-import hello.movie.service.MemberService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/follow")
 public class FollowController {
 
     private final FollowerService followerService;
 
     //팔로우 기능
-    @PostMapping("/follow")
-    public ResponseEntity<CustomResponse> follow(@RequestParam Long followerId, @RequestParam Long followingId){
+    @PostMapping("/{followingId}")
+    public ResponseEntity<CustomResponse> follow(@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long followingId){
+        Long followerId = principalDetails.getMember().getId();
+
         followerService.follow(followerId, followingId);
 
         CustomResponse response = CustomResponse.builder()
@@ -33,8 +34,10 @@ public class FollowController {
     }
 
     //언팔로우 기능
-    @PostMapping("/unfollow")
-    public ResponseEntity<CustomResponse> unfollow(@RequestParam Long followerId, @RequestParam Long followingId){
+    @PostMapping("/unfollow/{followingId}")
+    public ResponseEntity<CustomResponse> unfollow(@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long followingId){
+        Long followerId = principalDetails.getMember().getId();
+
         followerService.unfollow(followerId, followingId);
 
         CustomResponse response = CustomResponse.builder()
@@ -43,10 +46,27 @@ public class FollowController {
         return ResponseEntity.ok(response);
     }
 
+    //팔로우 상태 확인
+    @GetMapping("/status/{followingId}")
+    public ResponseEntity<CustomResponse> checkFollowStatus(@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long followingId){
+        Long followerId = principalDetails.getMember().getId();
+
+        Boolean status = followerService.isFollowing(followerId, followingId);
+
+        CustomResponse response = CustomResponse.builder()
+                .message("구독 상태 유무")
+                .data(status)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
     //팔로우한 사람 목록 보기
-    @GetMapping("/followers/{memberId}")
-    public ResponseEntity<CustomResponse> getFollowersList(@PathVariable Long memberId){
-        Optional<List<Member>> followersList = followerService.getFollowersList(memberId);
+    @GetMapping("/followers")
+    public ResponseEntity<CustomResponse> getFollowersList(@AuthenticationPrincipal PrincipalDetails principalDetails){
+        Long memberId = principalDetails.getMember().getId();
+
+        List<FollowResponseDto> followersList = followerService.getFollowersList(memberId);
 
         CustomResponse response = CustomResponse.builder()
                 .message("팔로우한 사람 목록 조회 성공")

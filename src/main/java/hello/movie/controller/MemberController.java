@@ -147,6 +147,7 @@ public class MemberController {
 
     private static SearchMemberResponseDto createSearchMemberResponseDto(Member member) {
         return SearchMemberResponseDto.builder()
+                .id(member.getId())
                 .profilePath(member.getProfilePath())
                 .nickname(member.getNickname())
                 .userId(member.getUserId())
