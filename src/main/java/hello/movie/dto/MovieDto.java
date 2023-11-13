@@ -12,7 +12,7 @@ public class MovieDto {
     private String title;
     private String overview;
     private LocalDate releaseDate;
-    private float rating;
+    private Double rating;
     private String posterPath;
     private String trailerPath;
     private List<MovieGenreDto> genres;
@@ -28,6 +28,7 @@ class MovieGenreDto {
 @Getter @Setter
 class MovieActorDto {
     private String name;
+    private Long tmdbId;
     private String character;
     private String profilePath;
 }
@@ -35,6 +36,7 @@ class MovieActorDto {
 @Getter @Setter
 class MovieCrewDto {
     private String name;
+    private Long tmdbId;
     private String character;
     private String profilePath;
 }
