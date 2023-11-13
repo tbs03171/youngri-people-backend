@@ -156,7 +156,8 @@ public class MemberController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회원가입 성공"),
             @ApiResponse(responseCode = "409", description = "아이디 중복"),
-            @ApiResponse(responseCode = "400", description = "검증 오류로 실패")})
+            @ApiResponse(responseCode = "400_1", description = "검증 오류로 실패"),
+            @ApiResponse(responseCode = "400_2", description = "비밀번호 불일치")})
     @PostMapping("/create")
     public ResponseEntity<CustomResponse> createMember(@RequestBody @Valid CreateMemberDto createMemberDto, BindingResult bindingResult){
 
@@ -164,6 +165,14 @@ public class MemberController {
             CustomResponse response = CustomResponse.builder()
                     .message(bindingResult.getFieldError().getDefaultMessage())
                     .build();
+            return ResponseEntity.badRequest().body(response);
+        }
+
+        if(!createMemberDto.getPassword().equals(createMemberDto.getCheckPassword())){
+            CustomResponse response = CustomResponse.builder()
+                    .message("비밀번호 불일치")
+                    .build();
+
             return ResponseEntity.badRequest().body(response);
         }
 
