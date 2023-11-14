@@ -1,9 +1,12 @@
 package hello.movie.dto;
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 
 import java.time.LocalDateTime;
 
@@ -17,8 +20,18 @@ public class ReviewDTO {
     private int reviewRating;
     private int likeCount;
     private String comment;
+    private Long mid;
+    private String nickname;
+    private String userid;
+    private Long mno;
 
-    private LocalDateTime createdDate , modifiedDate;
+
+    @CreatedDate
+    @Column(updatable = false)
+    private LocalDateTime createdDate;
+
+    @LastModifiedBy
+    private LocalDateTime modifiedDate;
 
 
 
