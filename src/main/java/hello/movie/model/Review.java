@@ -28,6 +28,12 @@ public class Review {
     private int likeCount;
     private int reviewRating;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Movie movie;
+
     @CreatedDate
     @Column(updatable = false)
     private LocalDateTime createdDate;
@@ -37,6 +43,8 @@ public class Review {
 
     @OneToMany(mappedBy = "review",cascade = CascadeType.ALL)
     List<ReviewLike> reviewLikes = new ArrayList<>();
+
+
 
     public void changeGrade(int reviewRating){
         this.reviewRating = reviewRating;
