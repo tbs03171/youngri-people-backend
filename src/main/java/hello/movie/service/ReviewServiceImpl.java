@@ -1,7 +1,7 @@
 package hello.movie.service;
 
-import hello.movie.model.Review;
 import hello.movie.dto.ReviewDTO;
+import hello.movie.model.Review;
 import hello.movie.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

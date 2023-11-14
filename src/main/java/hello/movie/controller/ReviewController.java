@@ -2,6 +2,7 @@ package hello.movie.controller;
 
 import hello.movie.dto.ReviewDTO;
 import hello.movie.service.ReviewService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,8 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/reviews")
+@RequestMapping("/api/reviews")
+@SecurityRequirement(name = "Bearer Authentication")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -23,7 +25,7 @@ public class ReviewController {
         return new ResponseEntity<>(listOFMovie,HttpStatus.OK);
     }
 
-    @GetMapping()
+    @PostMapping()
     public ResponseEntity<Long> addReview(@RequestBody ReviewDTO reviewDTO){
 
         Long findReview = reviewService.register(reviewDTO);
