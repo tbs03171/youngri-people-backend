@@ -1,7 +1,9 @@
 package hello.movie.service;
 
-import hello.movie.model.Review;
 import hello.movie.dto.ReviewDTO;
+import hello.movie.model.Member;
+import hello.movie.model.Movie;
+import hello.movie.model.Review;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,9 +29,11 @@ public interface ReviewService {
         Review review = Review.builder()
                 .id(reviewDTO.getId())
                 .reviewRating(reviewDTO.getReviewRating())
+                .member(Member.builder().id(reviewDTO.getMid()).build())
                 .comment(reviewDTO.getComment())
                 .likeCount(reviewDTO.getLikeCount())
                 .modifiedDate(LocalDateTime.now())
+                .movie(Movie.builder().id(reviewDTO.getMid()).build())
                 .build();
 
         return review;
@@ -42,9 +46,14 @@ public interface ReviewService {
                 .reviewRating(review.getReviewRating())
                 .likeCount(review.getLikeCount())
                 .comment(review.getComment())
+                .mid(review.getMember().getId())
+                .nickname(review.getMember().getNickname())
+                .userid(review.getMember().getUserId())
                 .modifiedDate(review.getModifiedDate())
                 .createdDate(review.getCreatedDate())
+                .mno(review.getMovie().getId())
                 .build();
+
         return reviewDTO;
     }
 
