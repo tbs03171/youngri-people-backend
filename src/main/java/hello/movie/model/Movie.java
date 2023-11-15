@@ -24,8 +24,9 @@ public class Movie {
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private final List<MovieActor> actors = new ArrayList<>();
 
-    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
-    private final List<MovieCrew> crew = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "DIRECTOR_ID")
+    private MovieDirector director;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL)
     private final List<MovieGenre> genres = new ArrayList<>();
@@ -51,13 +52,18 @@ public class Movie {
     }
 
 
-    public void addMovieCrew(MovieCrew crewMember) {
-        crew.add(crewMember);
-        crewMember.setMovie(this);
-    }
+//    public void addMovieCrew(MovieDirector crewMember) {
+//        crew.add(crewMember);
+//        crewMember.setMovie(this);
+//    }
 
     public void addMovieGenre(MovieGenre movieGenre) {
         genres.add(movieGenre);
         movieGenre.setMovie(this);
+    }
+
+    public void setDirector(MovieDirector movieDirector) {
+        director = movieDirector;
+        movieDirector.setMovie(this);
     }
 }

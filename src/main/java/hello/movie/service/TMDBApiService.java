@@ -16,7 +16,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -243,11 +242,20 @@ public class TMDBApiService {
             movie.addMovieActor(parseActor(actor));
         }
 
-        // 스탭 정보 추가
+        // 감독 정보 추가
         JsonNode crewList = responseBody.get("credits").get("crew");
         for (JsonNode crew : crewList) {
-            movie.addMovieCrew(parseCrew(crew));
+            if (crew.get("job").asText().equals("Director")) {
+                movie.setDirector(parseDirector(crew));
+            }
         }
+
+
+//        // 스탭 정보 추가
+//        JsonNode crewList = responseBody.get("credits").get("crew");
+//        for (JsonNode crew : crewList) {
+//            movie.addMovieCrew(parseCrew(crew));
+//        }
 
         // 장르 정보 추가
         JsonNode genreList = responseBody.get("genres");
@@ -270,17 +278,27 @@ public class TMDBApiService {
         return movieActor;
     }
 
-
-    // 스탭 정보 파싱
-    private MovieCrew parseCrew(JsonNode crew) {
-        MovieCrew movieCrew = MovieCrew.builder()
-                .tmdbId(crew.get("id").asLong())
-                .name(crew.get("name").asText())
-                .character(crew.get("job").asText())
-                .profilePath(IMAGE_BASE_URL + crew.get("profile_path").asText())
+    // 감독 정보 파싱
+    private MovieDirector parseDirector(JsonNode director) {
+        MovieDirector movieDirector = MovieDirector.builder()
+                .tmdbId(director.get("id").asLong())
+                .name(director.get("name").asText())
+                .profilePath(IMAGE_BASE_URL + director.get("profile_path").asText())
                 .build();
-        return movieCrew;
+        return movieDirector;
     }
+
+
+//    // 스탭 정보 파싱
+//    private MovieDirector parseCrew(JsonNode crew) {
+//        MovieDirector movieDirector = MovieDirector.builder()
+//                .tmdbId(crew.get("id").asLong())
+//                .name(crew.get("name").asText())
+//                .character(crew.get("job").asText())
+//                .profilePath(IMAGE_BASE_URL + crew.get("profile_path").asText())
+//                .build();
+//        return movieDirector;
+//    }
 
 
     // 장르 정보 파싱

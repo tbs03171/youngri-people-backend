@@ -7,15 +7,14 @@ import lombok.Getter;
 @Entity
 @Builder
 @Getter
-public class MovieCrew {
+public class MovieDirector {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long tmdbId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MOVIE_ID")
+    @OneToOne(mappedBy = "director", fetch = FetchType.LAZY)
     private Movie movie;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
@@ -24,7 +23,7 @@ public class MovieCrew {
 
     private String name;
 
-    private String character;
+//    private String character;
 
     private String profilePath;
 

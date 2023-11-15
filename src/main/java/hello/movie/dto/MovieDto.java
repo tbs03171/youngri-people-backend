@@ -17,7 +17,7 @@ public class MovieDto {
     private String trailerPath;
     private List<MovieGenreDto> genres;
     private List<MovieActorDto> actors;
-    private List<MovieCrewDto> crew;
+    private MovieDirectorDto director;
 }
 
 @Getter @Setter
@@ -34,9 +34,8 @@ class MovieActorDto {
 }
 
 @Getter @Setter
-class MovieCrewDto {
+class MovieDirectorDto {
     private String name;
     private Long tmdbId;
-    private String character;
     private String profilePath;
 }
