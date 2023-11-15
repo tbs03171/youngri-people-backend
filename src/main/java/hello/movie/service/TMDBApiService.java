@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -16,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,25 +34,30 @@ public class TMDBApiService {
     /**
      * 영화 상세 정보 조회
      */
-    public Movie getMovieById(Long id) throws JsonProcessingException {
+    public Optional<Movie> getMovieById(Long movieId) throws JsonProcessingException {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
-                .path("/movie/{id}")
+                .path("/movie/{movieId}")
                 .queryParam("api_key", KEY)
                 .queryParam("language", "ko-KR")
                 .queryParam("append_to_response", "credits");
-        builder.uriVariables(Collections.singletonMap("id", id));
+        builder.buildAndExpand(movieId);
+//        builder.uriVariables(Collections.singletonMap("movieId", movieId));
 
         // HTTP GET 요청
-        ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
+        try {
+            ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
 
-        // JSON 응답 파싱
-        JsonNode responseBody = response.getBody();
+            // JSON 응답 파싱
+            JsonNode responseBody = response.getBody();
 
-        // 영화 정보 생성
-        Movie movie = parseMovieInfo(responseBody);
+            // 영화 정보 생성
+            Movie movie = parseMovieInfo(responseBody);
 
-        return movie;
+            return Optional.of(movie);
+        } catch (HttpClientErrorException e) { // 유효하지 않은 Movie ID
+            return Optional.empty();
+        }
     }
 
 

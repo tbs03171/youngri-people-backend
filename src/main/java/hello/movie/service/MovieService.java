@@ -26,12 +26,18 @@ public class MovieService {
      * 영화 상세 정보 조회
      */
     @Transactional
-    public MovieDto getMovieById(Long movieId) throws JsonProcessingException {
+    public Optional<MovieDto> getMovieById(Long movieId) throws JsonProcessingException {
         if (!movieRepository.existsByTmdbId(movieId)) { // 영화 정보가 DB에 없는 경우 TMDB에서 가져와서 저장
-            movieRepository.save(tmdbApiService.getMovieById(movieId));
+            Optional<Movie> movie = tmdbApiService.getMovieById(movieId);
+            if (movie.isPresent()) movieRepository.save(movie.get());
         }
-        Movie movie = movieRepository.findByTmdbId(movieId).get();
-        return convertToMovieDto(movie);
+
+        Optional<Movie> movie = movieRepository.findByTmdbId(movieId);
+
+        // 유효하지 않은 movie id
+        if (!movie.isPresent()) return Optional.empty();
+
+        return Optional.of(convertToMovieDto(movie.get()));
     }
 
 
