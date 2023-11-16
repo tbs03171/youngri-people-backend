@@ -1,6 +1,7 @@
 package hello.movie.controller;
 
 import hello.movie.CustomResponse;
+import hello.movie.auth.PrincipalDetails;
 import hello.movie.dto.ReviewDTO;
 import hello.movie.model.Review;
 import hello.movie.service.ReviewService;
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -39,8 +41,12 @@ public class ReviewController {
     }
 
     @PostMapping()
-    public ResponseEntity<CustomResponse> addReview(@RequestBody ReviewDTO reviewDTO){
+    public ResponseEntity<CustomResponse> addReview(@RequestBody ReviewDTO reviewDTO,
+                                                    @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
+        Long memberid = principalDetails.getMember().getId();
+
+        reviewDTO.setMemberid(memberid);
         Long findReview = reviewService.register(reviewDTO);
         CustomResponse response = CustomResponse.builder()
                 .message("리뷰 작성 성공")
@@ -51,12 +57,13 @@ public class ReviewController {
     }
 
     @PutMapping("/{reviewid}")
-    public ResponseEntity<CustomResponse> modifyReview(@PathVariable Long reviewid, @RequestBody ReviewDTO reviewDTO){
-
+    public ResponseEntity<CustomResponse> modifyReview(@PathVariable Long reviewid,
+                                                       @RequestBody ReviewDTO reviewDTO,
+                                                       @AuthenticationPrincipal PrincipalDetails principalDetails){
         Review review = reviewService.findOne(reviewid);
 
 
-        if(!review.getMember().getId().equals(reviewDTO.getMemberid())) {
+        if(!review.getMember().getId().equals(principalDetails.getMember().getId())) {
             CustomResponse response = CustomResponse.builder()
                     .message("글 작성자가 아니라 수정 불가")
                     .data(reviewid)
@@ -72,12 +79,13 @@ public class ReviewController {
     }
 
     @DeleteMapping("/{memberid}/{reviewid}")
-    public ResponseEntity<CustomResponse> removeReview(@PathVariable Long reviewid,@PathVariable Long memberid){
+    public ResponseEntity<CustomResponse> removeReview(@PathVariable Long reviewid,
+                                                       @AuthenticationPrincipal PrincipalDetails principalDetails){
         Review review = reviewService.findOne(reviewid);
 
-        if(!review.getMember().getId().equals(memberid)) {
+        if(!review.getMember().getId().equals(principalDetails.getMember().getId())) {
             CustomResponse response = CustomResponse.builder()
-                    .message("글 작성자가 아니라 삭제")
+                    .message("글 작성자가 아니라 삭제불가")
                     .data(reviewid)
                     .build();
             return new ResponseEntity<>(response, HttpStatus.OK);
