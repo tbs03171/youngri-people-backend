@@ -33,7 +33,7 @@ public interface ReviewService {
                 .comment(reviewDTO.getComment())
                 .likeCount(reviewDTO.getLikeCount())
                 .modifiedDate(LocalDateTime.now())
-                .movie(Movie.builder().id(reviewDTO.getMid()).build())
+                .movie(Movie.builder().id(reviewDTO.getMno()).build())
                 .build();
 
         return review;
