@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @SecurityRequirement(name = "Bearer Authentication")
@@ -26,12 +27,19 @@ public class PreferredGenreController {
     @GetMapping("")
     public ResponseEntity<CustomResponse> getPreferredGenres(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long memberId = principalDetails.getMember().getId();
-        List<Genre> preferredGenres = preferredGenreService.getPreferredGenres(memberId);
+        Optional<List<Genre>> preferredGenres = preferredGenreService.getPreferredGenres(memberId);
 
-        CustomResponse response = CustomResponse.builder()
-                .message("선호 장르 조회 성공")
-                .data(preferredGenres)
-                .build();
+        CustomResponse response;
+        if (preferredGenres.isEmpty()) { // 선호 장르 없는 경우
+            response = CustomResponse.builder()
+                    .message("선호 장르 없음")
+                    .build();
+        } else { // 선호 장르 있는 경우
+            response = CustomResponse.builder()
+                    .message("선호 장르 조회 성공")
+                    .data(preferredGenres.get())
+                    .build();
+        }
 
         return ResponseEntity.ok(response);
     }

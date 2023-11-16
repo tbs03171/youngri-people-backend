@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,12 +27,18 @@ public class MovieService {
      * 영화 상세 정보 조회
      */
     @Transactional
-    public MovieDto getMovieById(Long movieId) throws JsonProcessingException {
+    public Optional<MovieDto> getMovieById(Long movieId) throws JsonProcessingException {
         if (!movieRepository.existsByTmdbId(movieId)) { // 영화 정보가 DB에 없는 경우 TMDB에서 가져와서 저장
-            movieRepository.save(tmdbApiService.getMovieById(movieId));
+            Optional<Movie> movie = tmdbApiService.getMovieById(movieId);
+            if (movie.isPresent()) movieRepository.save(movie.get());
         }
-        Movie movie = movieRepository.findByTmdbId(movieId).get();
-        return convertToMovieDto(movie);
+
+        Optional<Movie> movie = movieRepository.findByTmdbId(movieId);
+
+        // 유효하지 않은 movie id
+        if (movie.isEmpty()) return Optional.empty();
+
+        return Optional.of(convertToMovieDto(movie.get()));
     }
 
 
@@ -70,7 +77,7 @@ public class MovieService {
     /**
      * 제목으로 영화 검색
      */
-    public List<MovieListDto> searchMoviesByTitle(String title) {
+    public Optional<List<MovieListDto>> searchMoviesByTitle(String title) {
         return tmdbApiService.searchMoviesByTitle(title);
     }
 
@@ -78,17 +85,30 @@ public class MovieService {
     /**
      * 스탭 또는 배우 이름으로 영화 검색
      */
-    public List<MovieListDto> searchMoviesByPerson(String name) {
+    public Optional<List<MovieListDto>> searchMoviesByPerson(String name) {
         return tmdbApiService.searchMoviesByPerson(name);
     }
 
 
     /**
-     * 장르로 영화 검색
+     * 장르로 영화 조회
      */
-    public List<MovieListDto> searchMoviesByGenre(String genre) {
-        Long id = (Long) Genre.fromString(genre).getId();
-        return tmdbApiService.searchMoviesByGenre(id);
+    public Optional<List<MovieListDto>> getMoviesByGenres(List<String> genres) {
+        // genre를 genreId로 변환
+        List<Long> genreIds = new ArrayList<>();
+        for (String genre : genres) {
+            long genreId = Genre.fromString(genre).getId();
+            genreIds.add(genreId);
+        }
+        return tmdbApiService.getMoviesByGenreIds(genreIds);
+    }
+
+
+    /**
+     * 감독 혹은 배우 필모그래피 조회
+     */
+    public Optional<List<MovieListDto>> getFilmographyByPerson(Long personId) {
+        return tmdbApiService.getFilmographyByPerson(personId);
     }
 
 

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -16,6 +17,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,25 +35,30 @@ public class TMDBApiService {
     /**
      * 영화 상세 정보 조회
      */
-    public Movie getMovieById(Long id) throws JsonProcessingException {
+    public Optional<Movie> getMovieById(Long movieId) throws JsonProcessingException {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
-                .path("/movie/{id}")
+                .path("/movie/{movieId}")
                 .queryParam("api_key", KEY)
                 .queryParam("language", "ko-KR")
                 .queryParam("append_to_response", "credits");
-        builder.uriVariables(Collections.singletonMap("id", id));
+//        builder.buildAndExpand(movieId);
+        builder.uriVariables(Collections.singletonMap("movieId", movieId));
 
         // HTTP GET 요청
-        ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
+        try {
+            ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
 
-        // JSON 응답 파싱
-        JsonNode responseBody = response.getBody();
+            // JSON 응답 파싱
+            JsonNode responseBody = response.getBody();
 
-        // 영화 정보 생성
-        Movie movie = parseMovieInfo(responseBody);
+            // 영화 정보 생성
+            Movie movie = parseMovieInfo(responseBody);
 
-        return movie;
+            return Optional.of(movie);
+        } catch (HttpClientErrorException e) { // 유효하지 않은 Movie ID
+            return Optional.empty();
+        }
     }
 
 
@@ -137,7 +145,7 @@ public class TMDBApiService {
     /**
      * 제목으로 영화 검색
      */
-    public List<MovieListDto> searchMoviesByTitle(String title) {
+    public Optional<List<MovieListDto>> searchMoviesByTitle(String title) {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/search/movie")
@@ -150,15 +158,18 @@ public class TMDBApiService {
 //        System.out.println(builder.build().toUriString());
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.build().toUriString(), JsonNode.class); // 인코딩 두 번 되는 거 조심 !!
 
+        // 검색 결과가 없는 경우
+        if (response.getBody().get("total_results").asLong() == 0) return Optional.empty();
+
         // 영화 리스트 파싱해서 반환
-        return parseMovieList(response.getBody().get("results"));
+        return Optional.of(parseMovieList(response.getBody().get("results")));
     }
 
 
     /**
      * 스탭 또는 배우 이름으로 영화 검색
      */
-    public List<MovieListDto> searchMoviesByPerson(String name) {
+    public Optional<List<MovieListDto>> searchMoviesByPerson(String name) {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/search/person")
@@ -171,15 +182,23 @@ public class TMDBApiService {
 //        System.out.println(builder.build().toUriString());
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.build().toUriString(), JsonNode.class);
 
+        // 검색 결과가 없는 경우
+        if (response.getBody().get("total_results").asLong() == 0) return Optional.empty();
+
         // 영화 리스트 파싱해서 반환
-        return parseMovieList(response.getBody().get("results").get(0).get("known_for"));
+        return Optional.of(parseMovieList(response.getBody().get("results").get(0).get("known_for")));
     }
 
 
     /**
-     * 장르로 영화 검색
+     * 장르 ID로 영화 조회
      */
-    public List<MovieListDto> searchMoviesByGenre(Long id) {
+    public Optional<List<MovieListDto>> getMoviesByGenreIds(List<Long> genreIds) {
+        // genreId를 |로 연결
+        String joinedGenreIds = genreIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining("|"));
+
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/discover/movie")
@@ -189,15 +208,42 @@ public class TMDBApiService {
                 .queryParam("include_video", "false")
                 .queryParam("page", 1)
                 .queryParam("sort_by", "popularity.desc")
-                .queryParam("with_genres", id);
+                .queryParam("with_genres", joinedGenreIds);
 
         // HTTP GET 요청
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
 
+        // 검색 결과가 없는 경우
+        if (response.getBody().get("total_results").asLong() == 0) return Optional.empty();
+
         // 영화 리스트 파싱해서 반환
-        return parseMovieList(response.getBody().get("results"));
+        return Optional.of(parseMovieList(response.getBody().get("results")));
     }
 
+    /**
+     * 감독 혹은 배우 필모그래피 조회
+     */
+    public Optional<List<MovieListDto>> getFilmographyByPerson(Long personId) {
+        // 요청 URL 생성
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
+                .path("/discover/movie")
+                .queryParam("api_key", KEY)
+                .queryParam("language", "ko-KR")
+                .queryParam("include_adult", "true")
+                .queryParam("include_video", "false")
+                .queryParam("page", 1)
+                .queryParam("sort_by", "popularity.desc")
+                .queryParam("with_people", personId);
+
+        // HTTP GET 요청
+        ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
+
+        // 검색 결과가 없는 경우
+        if (response.getBody().get("total_results").asLong() == 0) return Optional.empty();
+
+        // 영화 리스트 파싱해서 반환
+        return Optional.of(parseMovieList(response.getBody().get("results")));
+    }
 
     /**
      * 영화 예고편 조회
@@ -224,7 +270,9 @@ public class TMDBApiService {
     }
 
 
-    // 영화 상세 정보 파싱
+    /**
+     * 영화 상세 정보 파싱
+     */
     private Movie parseMovieInfo(JsonNode responseBody) {
         Movie movie = Movie.builder()
                 .tmdbId(responseBody.get("id").asLong())
@@ -267,7 +315,9 @@ public class TMDBApiService {
     }
 
 
-    // 배우 정보 파싱
+    /**
+     * 배우 정보 파싱
+     */
     private MovieActor parseActor(JsonNode actor) {
         MovieActor movieActor = MovieActor.builder()
                 .tmdbId(actor.get("id").asLong())
@@ -278,7 +328,9 @@ public class TMDBApiService {
         return movieActor;
     }
 
-    // 감독 정보 파싱
+    /**
+     * 감독 정보 파싱
+     */
     private MovieDirector parseDirector(JsonNode director) {
         MovieDirector movieDirector = MovieDirector.builder()
                 .tmdbId(director.get("id").asLong())
@@ -301,7 +353,9 @@ public class TMDBApiService {
 //    }
 
 
-    // 장르 정보 파싱
+    /**
+     * 장르 정보 파싱
+     */
     private MovieGenre parseGenre(JsonNode genre) {
         MovieGenre movieGenre = MovieGenre.builder()
                 .genre(Genre.fromId(genre.get("id").asLong()))
@@ -310,7 +364,9 @@ public class TMDBApiService {
     }
 
 
-    // 영화 리스트 파싱
+    /**
+     * 영화 리스트 파싱
+     */
     private List<MovieListDto> parseMovieList(JsonNode movies) {
         List<MovieListDto> movieList = new ArrayList<>();
         for (JsonNode movie : movies) {
