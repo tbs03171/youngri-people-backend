@@ -32,8 +32,8 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    /*@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Movie movie;*/
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Movie movie;
 
     @CreatedDate
     @Column(updatable = false)

@@ -22,12 +22,12 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-   /* @GetMapping("/movieall/{movieid}")
+    @GetMapping("/movieall/{movieid}")
     public ResponseEntity<List<ReviewDTO>> getList(@PathVariable("movieid") Long movieid){
         List<ReviewDTO> listOFMovie = reviewService.getListOFMovie(movieid);
 
         return new ResponseEntity<>(listOFMovie,HttpStatus.OK);
-    }*/
+    }
 
     @GetMapping("/memberall/{memberid}")
     public ResponseEntity<CustomResponse> getMemberList(@PathVariable("memberid") Long memberid){
@@ -40,12 +40,14 @@ public class ReviewController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @PostMapping()
-    public ResponseEntity<CustomResponse> addReview(@RequestBody ReviewDTO reviewDTO,
+    @PostMapping("/{movieid}")
+    public ResponseEntity<CustomResponse> addReview(@PathVariable("movieid") Long movieid,
+                                                    @RequestBody ReviewDTO reviewDTO,
                                                     @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         Long memberid = principalDetails.getMember().getId();
 
+        reviewDTO.setMovieid(movieid);
         reviewDTO.setMemberid(memberid);
         Long findReview = reviewService.register(reviewDTO);
         CustomResponse response = CustomResponse.builder()

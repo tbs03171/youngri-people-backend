@@ -10,8 +10,8 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review,Long> {
 
-    /*@EntityGraph(attributePaths = {"member"}, type = EntityGraph.EntityGraphType.FETCH)
-    List<Review> findByMovie(Movie movie);*/
+    @EntityGraph(attributePaths = {"member"}, type = EntityGraph.EntityGraphType.FETCH)
+    List<Review> findByMovie(Movie movie);
 
     @EntityGraph(attributePaths = {"member"}, type = EntityGraph.EntityGraphType.FETCH)
     List<Review> findByMember(Member member);

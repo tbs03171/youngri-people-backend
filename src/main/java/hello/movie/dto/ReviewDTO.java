@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class ReviewDTO {
 
     private Long id;
-  //  private Long movieid;
+    private Long movieid;
     private Long memberid;
     private int reviewRating;
     private int likeCount;

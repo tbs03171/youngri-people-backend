@@ -20,12 +20,12 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepository reviewRepository;
 
 
-    /*@Override
+    @Override
     public List<ReviewDTO> getListOFMovie(Long movieid) {
         Movie movie = Movie.builder().id(movieid).build();
         List<Review> result = reviewRepository.findByMovie(movie);
         return result.stream().map(movieReview -> entityToDTO(movieReview)).collect(Collectors.toList());
-    }*/
+    }
 
     @Override
     public List<ReviewDTO> getListOFMember(Long memberid) {
