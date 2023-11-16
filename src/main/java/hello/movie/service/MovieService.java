@@ -35,7 +35,7 @@ public class MovieService {
         Optional<Movie> movie = movieRepository.findByTmdbId(movieId);
 
         // 유효하지 않은 movie id
-        if (!movie.isPresent()) return Optional.empty();
+        if (movie.isEmpty()) return Optional.empty();
 
         return Optional.of(convertToMovieDto(movie.get()));
     }
@@ -76,7 +76,7 @@ public class MovieService {
     /**
      * 제목으로 영화 검색
      */
-    public List<MovieListDto> searchMoviesByTitle(String title) {
+    public Optional<List<MovieListDto>> searchMoviesByTitle(String title) {
         return tmdbApiService.searchMoviesByTitle(title);
     }
 
@@ -84,7 +84,7 @@ public class MovieService {
     /**
      * 스탭 또는 배우 이름으로 영화 검색
      */
-    public List<MovieListDto> searchMoviesByPerson(String name) {
+    public Optional<List<MovieListDto>> searchMoviesByPerson(String name) {
         return tmdbApiService.searchMoviesByPerson(name);
     }
 
@@ -92,9 +92,11 @@ public class MovieService {
     /**
      * 장르로 영화 검색
      */
-    public List<MovieListDto> searchMoviesByGenre(String genre) {
-        Long id = (Long) Genre.fromString(genre).getId();
-        return tmdbApiService.searchMoviesByGenre(id);
+    public Optional<List<MovieListDto>> searchMoviesByGenre(String genre) {
+        Genre g = Genre.fromString(genre);
+        if (g == null) return Optional.empty();
+
+        return tmdbApiService.searchMoviesByGenre((Long)g.getId());
     }
 
 

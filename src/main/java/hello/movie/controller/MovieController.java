@@ -36,7 +36,7 @@ public class MovieController {
         Optional<MovieDto> movieDto = movieService.getMovieById(movieId);
 
         // 조회 실패
-        if (!movieDto.isPresent()) {
+        if (movieDto.isEmpty()) {
            CustomResponse response = CustomResponse.builder()
                    .message("올바르지 않은 Movie ID: " + movieId)
                    .build();
@@ -46,7 +46,7 @@ public class MovieController {
         // 조회 성공
         CustomResponse response = CustomResponse.builder()
                 .message("영화 상세 정보 조회 성공")
-                .data(movieDto)
+                .data(movieDto.get())
                 .build();
         return ResponseEntity.ok(response);
     }
@@ -106,22 +106,47 @@ public class MovieController {
             @RequestParam(name = "person", required = false) String person,
             @RequestParam(name = "genre", required = false) String genre
     ) {
-        List<MovieListDto> movieListDto;
+        Optional<List<MovieListDto>> movieListDto;
+        CustomResponse response;
+
         if (title != null) {
             // 제목으로 영화 검색
             movieListDto = movieService.searchMoviesByTitle(title);
+            response = createSearchResponse(title, movieListDto);
+
         } else if (person != null) {
             // 배우나 감독으로 영화 검색
             movieListDto = movieService.searchMoviesByPerson(person);
-        } else {
+            response = createSearchResponse(person, movieListDto);
+
+        } else if (genre != null){
             // 장르로 영화 검색
             movieListDto = movieService.searchMoviesByGenre(genre);
+            response = createSearchResponse(genre, movieListDto);
+
+        } else {
+            // 검색어가 없는 경우 인기 있는 영화 목록 반환
+            movieListDto = Optional.of(movieService.getPopularMovies());
+            response = CustomResponse.builder()
+                    .message("검색어를 입력하지 않음. 요즘 인기있는 영화 목록 반환")
+                    .data(movieListDto)
+                    .build();
         }
 
-        CustomResponse response = CustomResponse.builder()
-                .message("검색 성공")
-                .data(movieListDto)
-                .build();
         return ResponseEntity.ok(response);
+    }
+
+
+    private CustomResponse createSearchResponse(String keyword, Optional<List<MovieListDto>> movieListDto) {
+        if (movieListDto.isEmpty()) {
+            return CustomResponse.builder()
+                    .message("검색 결과 없음: " + keyword)
+                    .build();
+        } else {
+            return CustomResponse.builder()
+                    .message(keyword + "으로 영화 검색 성공")
+                    .data(movieListDto.get())
+                    .build();
+        }
     }
 }
