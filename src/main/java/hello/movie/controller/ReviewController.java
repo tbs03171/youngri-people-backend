@@ -1,6 +1,8 @@
 package hello.movie.controller;
 
+import hello.movie.CustomResponse;
 import hello.movie.dto.ReviewDTO;
+import hello.movie.model.Review;
 import hello.movie.service.ReviewService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -18,34 +20,74 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<ReviewDTO>> getList(){
-        List<ReviewDTO> listOFMovie = reviewService.getListOFMovie();
+   /* @GetMapping("/movieall/{movieid}")
+    public ResponseEntity<List<ReviewDTO>> getList(@PathVariable("movieid") Long movieid){
+        List<ReviewDTO> listOFMovie = reviewService.getListOFMovie(movieid);
 
         return new ResponseEntity<>(listOFMovie,HttpStatus.OK);
+    }*/
+
+    @GetMapping("/memberall/{memberid}")
+    public ResponseEntity<CustomResponse> getMemberList(@PathVariable("memberid") Long memberid){
+        List<ReviewDTO> listOFMovie = reviewService.getListOFMember(memberid);
+        CustomResponse response = CustomResponse.builder()
+                .message("작성한 글 조회 성공")
+                .data(listOFMovie)
+                .build();
+
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @PostMapping()
-    public ResponseEntity<Long> addReview(@RequestBody ReviewDTO reviewDTO){
+    public ResponseEntity<CustomResponse> addReview(@RequestBody ReviewDTO reviewDTO){
 
         Long findReview = reviewService.register(reviewDTO);
-        return new ResponseEntity<>(findReview, HttpStatus.OK);
+        CustomResponse response = CustomResponse.builder()
+                .message("리뷰 작성 성공")
+                .data(findReview)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Long> modifyReview(@PathVariable Long id, @RequestBody ReviewDTO reviewDTO){
+    @PutMapping("/{reviewid}")
+    public ResponseEntity<CustomResponse> modifyReview(@PathVariable Long reviewid, @RequestBody ReviewDTO reviewDTO){
 
-        reviewService.modify(reviewDTO,id);
-        return new ResponseEntity<>(id,HttpStatus.OK);
+        Review review = reviewService.findOne(reviewid);
+
+
+        if(!review.getMember().getId().equals(reviewDTO.getMemberid())) {
+            CustomResponse response = CustomResponse.builder()
+                    .message("글 작성자가 아니라 수정 불가")
+                    .data(reviewid)
+                    .build();
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        reviewService.modify(reviewDTO,reviewid);
+        CustomResponse response = CustomResponse.builder()
+                .message("리뷰 수정 성공")
+                .data(reviewid)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Long> removeReview(@PathVariable Long id){
+    @DeleteMapping("/{memberid}/{reviewid}")
+    public ResponseEntity<CustomResponse> removeReview(@PathVariable Long reviewid,@PathVariable Long memberid){
+        Review review = reviewService.findOne(reviewid);
 
-        reviewService.remove(id);
-
-        return new ResponseEntity<>(id,HttpStatus.OK);
+        if(!review.getMember().getId().equals(memberid)) {
+            CustomResponse response = CustomResponse.builder()
+                    .message("글 작성자가 아니라 삭제")
+                    .data(reviewid)
+                    .build();
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+        reviewService.remove(reviewid);
+        CustomResponse response = CustomResponse.builder()
+                .message("리뷰 삭제 성공")
+                .data(reviewid)
+                .build();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 

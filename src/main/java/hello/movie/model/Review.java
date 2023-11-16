@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -31,8 +32,8 @@ public class Review {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Movie movie;
+    /*@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Movie movie;*/
 
     @CreatedDate
     @Column(updatable = false)
@@ -57,6 +58,7 @@ public class Review {
     public void changDateTime(LocalDateTime localDateTime){
         this.modifiedDate = localDateTime;
     }
+
 
 
 }

@@ -17,13 +17,14 @@ import java.time.LocalDateTime;
 public class ReviewDTO {
 
     private Long id;
+  //  private Long movieid;
+    private Long memberid;
     private int reviewRating;
     private int likeCount;
     private String comment;
-    private Long mid;
     private String nickname;
     private String userid;
-    private Long mno;
+
 
 
     @CreatedDate
