@@ -137,6 +137,18 @@ public class MovieController {
     }
 
 
+    @GetMapping("/filmography/{personId}")
+    public ResponseEntity<CustomResponse> getFilmographyByPerson(@PathVariable Long personId) {
+        Optional<List<MovieListDto>> movieListDto = movieService.getFilmographyByPerson(personId);
+        CustomResponse response = CustomResponse.builder()
+                .message("필모그래피 조회 성공")
+                .data(movieListDto.get())
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+
     private CustomResponse createSearchResponse(String keyword, Optional<List<MovieListDto>> movieListDto) {
         if (movieListDto.isEmpty()) {
             return CustomResponse.builder()

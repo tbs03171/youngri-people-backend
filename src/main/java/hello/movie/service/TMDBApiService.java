@@ -214,6 +214,30 @@ public class TMDBApiService {
         return Optional.of(parseMovieList(response.getBody().get("results")));
     }
 
+    /**
+     * 감독 혹은 배우 필모그래피 조회
+     */
+    public Optional<List<MovieListDto>> getFilmographyByPerson(Long personId) {
+        // 요청 URL 생성
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
+                .path("/discover/movie")
+                .queryParam("api_key", KEY)
+                .queryParam("language", "ko-KR")
+                .queryParam("include_adult", "true")
+                .queryParam("include_video", "false")
+                .queryParam("page", 1)
+                .queryParam("sort_by", "popularity.desc")
+                .queryParam("with_people", personId);
+
+        // HTTP GET 요청
+        ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
+
+        // 검색 결과가 없는 경우
+        if (response.getBody().get("total_results").asLong() == 0) return Optional.empty();
+
+        // 영화 리스트 파싱해서 반환
+        return Optional.of(parseMovieList(response.getBody().get("results")));
+    }
 
     /**
      * 영화 예고편 조회
@@ -240,7 +264,9 @@ public class TMDBApiService {
     }
 
 
-    // 영화 상세 정보 파싱
+    /**
+     * 영화 상세 정보 파싱
+     */
     private Movie parseMovieInfo(JsonNode responseBody) {
         Movie movie = Movie.builder()
                 .tmdbId(responseBody.get("id").asLong())
@@ -283,7 +309,9 @@ public class TMDBApiService {
     }
 
 
-    // 배우 정보 파싱
+    /**
+     * 배우 정보 파싱
+     */
     private MovieActor parseActor(JsonNode actor) {
         MovieActor movieActor = MovieActor.builder()
                 .tmdbId(actor.get("id").asLong())
@@ -294,7 +322,9 @@ public class TMDBApiService {
         return movieActor;
     }
 
-    // 감독 정보 파싱
+    /**
+     * 감독 정보 파싱
+     */
     private MovieDirector parseDirector(JsonNode director) {
         MovieDirector movieDirector = MovieDirector.builder()
                 .tmdbId(director.get("id").asLong())
@@ -317,7 +347,9 @@ public class TMDBApiService {
 //    }
 
 
-    // 장르 정보 파싱
+    /**
+     * 장르 정보 파싱
+     */
     private MovieGenre parseGenre(JsonNode genre) {
         MovieGenre movieGenre = MovieGenre.builder()
                 .genre(Genre.fromId(genre.get("id").asLong()))
@@ -326,7 +358,9 @@ public class TMDBApiService {
     }
 
 
-    // 영화 리스트 파싱
+    /**
+     * 영화 리스트 파싱
+     */
     private List<MovieListDto> parseMovieList(JsonNode movies) {
         List<MovieListDto> movieList = new ArrayList<>();
         for (JsonNode movie : movies) {

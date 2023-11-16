@@ -101,6 +101,14 @@ public class MovieService {
 
 
     /**
+     * 감독 혹은 배우 필모그래피 조회
+     */
+    public Optional<List<MovieListDto>> getFilmographyByPerson(Long personId) {
+        return tmdbApiService.getFilmographyByPerson(personId);
+    }
+
+
+    /**
      * Movie 엔티티를 MovieDto로 변환
      */
     public MovieDto convertToMovieDto(Movie movie) {
