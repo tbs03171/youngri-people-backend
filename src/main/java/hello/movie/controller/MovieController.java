@@ -5,6 +5,7 @@ import hello.movie.CustomResponse;
 import hello.movie.auth.PrincipalDetails;
 import hello.movie.dto.MovieDto;
 import hello.movie.dto.MovieListDto;
+import hello.movie.model.Genre;
 import hello.movie.service.MovieService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -103,8 +105,7 @@ public class MovieController {
     @GetMapping("/search")
     public ResponseEntity<CustomResponse> searchMovies(
             @RequestParam(name = "title", required = false) String title,
-            @RequestParam(name = "person", required = false) String person,
-            @RequestParam(name = "genre", required = false) String genre
+            @RequestParam(name = "person", required = false) String person
     ) {
         Optional<List<MovieListDto>> movieListDto;
         CustomResponse response;
@@ -119,11 +120,6 @@ public class MovieController {
             movieListDto = movieService.searchMoviesByPerson(person);
             response = createSearchResponse(person, movieListDto);
 
-        } else if (genre != null){
-            // 장르로 영화 검색
-            movieListDto = movieService.searchMoviesByGenre(genre);
-            response = createSearchResponse(genre, movieListDto);
-
         } else {
             // 검색어가 없는 경우 인기 있는 영화 목록 반환
             movieListDto = Optional.of(movieService.getPopularMovies());
@@ -132,6 +128,17 @@ public class MovieController {
                     .data(movieListDto)
                     .build();
         }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/genres/{genre}")
+    public ResponseEntity<CustomResponse> getMoviesByGenre(@PathVariable String genre) {
+        Optional<List<MovieListDto>> movieListDto = movieService.getMoviesByGenres(List.of(new String[]{genre}));
+        CustomResponse response = CustomResponse.builder()
+                .message(genre + "장르로 영화 조회 성공")
+                .data(movieListDto.get())
+                .build();
 
         return ResponseEntity.ok(response);
     }

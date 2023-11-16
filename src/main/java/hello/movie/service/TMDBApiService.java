@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -190,9 +191,14 @@ public class TMDBApiService {
 
 
     /**
-     * 장르로 영화 검색
+     * 장르 ID로 영화 조회
      */
-    public Optional<List<MovieListDto>> searchMoviesByGenre(Long id) {
+    public Optional<List<MovieListDto>> getMoviesByGenreIds(List<Long> genreIds) {
+        // genreId를 |로 연결
+        String joinedGenreIds = genreIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining("|"));
+
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/discover/movie")
@@ -202,7 +208,7 @@ public class TMDBApiService {
                 .queryParam("include_video", "false")
                 .queryParam("page", 1)
                 .queryParam("sort_by", "popularity.desc")
-                .queryParam("with_genres", id);
+                .queryParam("with_genres", joinedGenreIds);
 
         // HTTP GET 요청
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);

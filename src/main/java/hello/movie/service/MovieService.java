@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,13 +91,16 @@ public class MovieService {
 
 
     /**
-     * 장르로 영화 검색
+     * 장르로 영화 조회
      */
-    public Optional<List<MovieListDto>> searchMoviesByGenre(String genre) {
-        Genre g = Genre.fromString(genre);
-        if (g == null) return Optional.empty();
-
-        return tmdbApiService.searchMoviesByGenre((Long)g.getId());
+    public Optional<List<MovieListDto>> getMoviesByGenres(List<String> genres) {
+        // genre를 genreId로 변환
+        List<Long> genreIds = new ArrayList<>();
+        for (String genre : genres) {
+            long genreId = Genre.fromString(genre).getId();
+            genreIds.add(genreId);
+        }
+        return tmdbApiService.getMoviesByGenreIds(genreIds);
     }
 
 
