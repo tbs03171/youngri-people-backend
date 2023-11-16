@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,20 +23,23 @@ public class PreferredGenreService {
     /**
      * 선호 장르 조회
      */
-    public List<Genre> getPreferredGenres(Long memberId) {
+    public Optional<List<Genre>> getPreferredGenres(Long memberId) {
         // 멤버 가져와서
         Member member = memberRepository.findById(memberId).get();
 
         // 선호 장르 조회해서
-        List<MemberPreferredGenre> memberPreferredGenres = preferredGenreRepository.findByMember(member).get();
+        Optional<List<MemberPreferredGenre>> memberPreferredGenres = preferredGenreRepository.findByMember(member);
+
+        // 선호 장르 없는 경우
+        if (memberPreferredGenres.isEmpty()) return Optional.empty();
 
         // List<Genre> 형태로 변환
         List<Genre> genres = new ArrayList<>();
-        for (MemberPreferredGenre memberPreferredGenre : memberPreferredGenres) {
+        for (MemberPreferredGenre memberPreferredGenre : memberPreferredGenres.get()) {
             genres.add(memberPreferredGenre.getGenre());
         }
 
-        return genres;
+        return Optional.of(genres);
     }
 
     /**
