@@ -2,6 +2,7 @@ package hello.movie.controller;
 
 import hello.movie.CustomResponse;
 import hello.movie.auth.PrincipalDetails;
+import hello.movie.dto.RequestReviewDto;
 import hello.movie.dto.ReviewDTO;
 import hello.movie.model.Review;
 import hello.movie.service.ReviewService;
@@ -23,10 +24,14 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @GetMapping("/movieall/{movieid}")
-    public ResponseEntity<List<ReviewDTO>> getList(@PathVariable("movieid") Long movieid){
+    public ResponseEntity<CustomResponse> getList(@PathVariable("movieid") Long movieid){
         List<ReviewDTO> listOFMovie = reviewService.getListOFMovie(movieid);
+        CustomResponse response = CustomResponse.builder()
+                .message("글 조회 성공")
+                .data(listOFMovie)
+                .build();
 
-        return new ResponseEntity<>(listOFMovie,HttpStatus.OK);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @GetMapping("/memberall/{memberid}")
@@ -42,11 +47,11 @@ public class ReviewController {
 
     @PostMapping("/{movieid}")
     public ResponseEntity<CustomResponse> addReview(@PathVariable("movieid") Long movieid,
-                                                    @RequestBody ReviewDTO reviewDTO,
+                                                    @RequestBody RequestReviewDto requestReviewDto,
                                                     @AuthenticationPrincipal PrincipalDetails principalDetails) {
 
         Long memberid = principalDetails.getMember().getId();
-
+        ReviewDTO reviewDTO = reviewService.requestToDTO(requestReviewDto);
         reviewDTO.setMovieid(movieid);
         reviewDTO.setMemberid(memberid);
         Long findReview = reviewService.register(reviewDTO);
@@ -60,7 +65,7 @@ public class ReviewController {
 
     @PutMapping("/{reviewid}")
     public ResponseEntity<CustomResponse> modifyReview(@PathVariable Long reviewid,
-                                                       @RequestBody ReviewDTO reviewDTO,
+                                                       @RequestBody RequestReviewDto requestReviewDto,
                                                        @AuthenticationPrincipal PrincipalDetails principalDetails){
         Review review = reviewService.findOne(reviewid);
 
@@ -72,7 +77,7 @@ public class ReviewController {
                     .build();
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
-        reviewService.modify(reviewDTO,reviewid);
+        reviewService.modify(requestReviewDto,reviewid);
         CustomResponse response = CustomResponse.builder()
                 .message("리뷰 수정 성공")
                 .data(reviewid)
@@ -80,7 +85,7 @@ public class ReviewController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{memberid}/{reviewid}")
+    @DeleteMapping("/{reviewid}")
     public ResponseEntity<CustomResponse> removeReview(@PathVariable Long reviewid,
                                                        @AuthenticationPrincipal PrincipalDetails principalDetails){
         Review review = reviewService.findOne(reviewid);

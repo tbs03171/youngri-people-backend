@@ -1,5 +1,6 @@
 package hello.movie.service;
 
+import hello.movie.dto.RequestReviewDto;
 import hello.movie.dto.ReviewDTO;
 import hello.movie.model.Member;
 import hello.movie.model.Movie;
@@ -18,7 +19,7 @@ public interface ReviewService {
     Long register(ReviewDTO reviewDTO);
 
     //리뷰 수정
-    void modify(ReviewDTO reviewDTO,Long id);
+    void modify(RequestReviewDto requestReviewDto,Long id);
 
     //리뷰 삭제
     void remove(Long id);
@@ -32,7 +33,6 @@ public interface ReviewService {
                 .member(Member.builder().id(reviewDTO.getMemberid()).build())
                 .reviewRating(reviewDTO.getReviewRating())
                 .comment(reviewDTO.getComment())
-                .likeCount(reviewDTO.getLikeCount())
                 .modifiedDate(LocalDateTime.now())
                 .build();
 
@@ -44,14 +44,22 @@ public interface ReviewService {
         ReviewDTO reviewDTO = ReviewDTO.builder()
                 .id(review.getId())
                 .reviewRating(review.getReviewRating())
-                .likeCount(review.getLikeCount())
                 .comment(review.getComment())
                 .memberid(review.getMember().getId())
-                .nickname(review.getMember().getNickname())
                 .userid(review.getMember().getUserId())
                 .modifiedDate(review.getModifiedDate())
                 .createdDate(review.getCreatedDate())
                .movieid(review.getMovie().getId())
+                .build();
+
+        return reviewDTO;
+    }
+
+    default ReviewDTO requestToDTO(RequestReviewDto requestReviewDto){
+
+        ReviewDTO reviewDTO = ReviewDTO.builder()
+                .reviewRating(requestReviewDto.getReviewRating())
+                .comment(requestReviewDto.getComment())
                 .build();
 
         return reviewDTO;

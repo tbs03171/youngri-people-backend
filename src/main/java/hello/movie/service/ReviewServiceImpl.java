@@ -1,5 +1,6 @@
 package hello.movie.service;
 
+import hello.movie.dto.RequestReviewDto;
 import hello.movie.dto.ReviewDTO;
 import hello.movie.model.Member;
 import hello.movie.model.Movie;
@@ -43,11 +44,11 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public void modify(ReviewDTO reviewDTO,Long id){
+    public void modify(RequestReviewDto requestReviewDto, Long id){
         Review review= reviewRepository.findById(id).orElseThrow(RuntimeException::new);
 
-        review.changeComment(reviewDTO.getComment());
-        review.changeGrade(reviewDTO.getReviewRating());
+        review.changeComment(requestReviewDto.getComment());
+        review.changeGrade(requestReviewDto.getReviewRating());
         review.changDateTime(LocalDateTime.now());
         reviewRepository.save(review);
 

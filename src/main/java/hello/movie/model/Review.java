@@ -26,13 +26,12 @@ public class Review {
     @Column(name = "REVIEW_ID")
     private Long id;
     private String comment;
-    private int likeCount;
     private int reviewRating;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Movie movie;
 
     @CreatedDate
