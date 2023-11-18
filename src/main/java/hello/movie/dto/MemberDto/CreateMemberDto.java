@@ -14,6 +14,7 @@ public class CreateMemberDto {
     private String userId;
     @NotBlank
     private String password;
+    private String checkPassword;
     private String name;
     private String phoneNumber;
     private Gender gender; //[MALE, FEMALE]

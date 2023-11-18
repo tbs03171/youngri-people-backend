@@ -1,6 +1,7 @@
 package hello.movie.service;
 
 
+import hello.movie.dto.FollowResponseDto;
 import hello.movie.model.Follow;
 import hello.movie.model.Member;
 import hello.movie.repository.FollowerRepository;
@@ -24,29 +25,20 @@ public class FollowerService {
         Optional<Member> follower = memberService.findById(followerId);
         Optional<Member> following = memberService.findById(followingId);
 
-        Follow follow = createFollow(follower, following);
+        Follow follow = Follow.createFollow(follower.get(), following.get());
         followerRepository.save(follow);
-    }
-
-    private static Follow createFollow(Optional<Member> follower, Optional<Member> following) {
-        Follow follow = new Follow(follower.get(), following.get());
-        return follow;
     }
 
     @Transactional
     public void unfollow(Long followerId, Long followingId){
-        Optional<Member> follower = memberService.findById(followerId);
-        Optional<Member> followee = memberService.findById(followingId);
-
-        Follow follow = findByFollowerAndFollowee(follower.get(), followee.get());
-        followerRepository.delete(follow);
+        followerRepository.deleteByFollowerIdAndFolloweeId(followerId, followingId);
     }
 
-    public Follow findByFollowerAndFollowee(Member follower, Member followee){
-        return followerRepository.findByFollowerAndFollowee(follower, followee);
+    public Boolean isFollowing(Long followerId, Long followingId){
+        return followerRepository.existsByFollowerIdAndFolloweeId(followerId, followingId);
     }
 
-    public Optional<List<Member>> getFollowersList(Long id) {
-        return followerRepository.findAllByFollower(id);
+    public List<FollowResponseDto> getFollowersList(Long memberId) {
+        return followerRepository.findAllFolloweeByFollower(memberId);
     }
 }
