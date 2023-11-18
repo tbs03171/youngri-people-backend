@@ -17,13 +17,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.Optional;
+
 
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
@@ -66,19 +64,24 @@ public class LoginController {
 
     //로그아웃 하기
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+    public ResponseEntity<CustomResponse> logout(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
+
+
+        CustomResponse response = CustomResponse.builder()
+                .message("로그아웃 성공")
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    public String createJwtTokenZero(PrincipalDetails principalDetails) {
         String jwtToken = JWT.create()
                 .withSubject(JwtProperties.SECRET)
-                .withExpiresAt(new Date(System.currentTimeMillis()))
+                .withExpiresAt(new Date(0))
                 .withClaim("id", principalDetails.getMember().getId())
                 .withClaim("userId", principalDetails.getMember().getUserId())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-
-        return ResponseEntity
-                .ok()
-                .header(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken)
-                .body("로그아웃 성공");
-
+        return jwtToken;
     }
 }
