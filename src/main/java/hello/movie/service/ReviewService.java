@@ -1,5 +1,6 @@
 package hello.movie.service;
 
+import hello.movie.dto.RequestReviewDto;
 import hello.movie.dto.ReviewDTO;
 import hello.movie.model.Member;
 import hello.movie.model.Movie;
@@ -12,13 +13,13 @@ public interface ReviewService {
 
     //영화의 모든 리뷰 불러오기
 
-    List<ReviewDTO> getListOFMovie();
-
+    List<ReviewDTO> getListOFMovie(Long movieid);
+    List<ReviewDTO> getListOFMember(Long memberid);
     //리뷰 추가
     Long register(ReviewDTO reviewDTO);
 
     //리뷰 수정
-    void modify(ReviewDTO reviewDTO,Long id);
+    void modify(RequestReviewDto requestReviewDto,Long id);
 
     //리뷰 삭제
     void remove(Long id);
@@ -28,12 +29,11 @@ public interface ReviewService {
     default Review dtoToEntity(ReviewDTO reviewDTO){
         Review review = Review.builder()
                 .id(reviewDTO.getId())
+               .movie(Movie.builder().id(reviewDTO.getMovieid()).build())
+                .member(Member.builder().id(reviewDTO.getMemberid()).build())
                 .reviewRating(reviewDTO.getReviewRating())
-                .member(Member.builder().id(reviewDTO.getMid()).build())
                 .comment(reviewDTO.getComment())
-                .likeCount(reviewDTO.getLikeCount())
                 .modifiedDate(LocalDateTime.now())
-                .movie(Movie.builder().id(reviewDTO.getMid()).build())
                 .build();
 
         return review;
@@ -44,17 +44,26 @@ public interface ReviewService {
         ReviewDTO reviewDTO = ReviewDTO.builder()
                 .id(review.getId())
                 .reviewRating(review.getReviewRating())
-                .likeCount(review.getLikeCount())
                 .comment(review.getComment())
-                .mid(review.getMember().getId())
-                .nickname(review.getMember().getNickname())
+                .memberid(review.getMember().getId())
                 .userid(review.getMember().getUserId())
                 .modifiedDate(review.getModifiedDate())
                 .createdDate(review.getCreatedDate())
-                .mno(review.getMovie().getId())
+               .movieid(review.getMovie().getId())
                 .build();
 
         return reviewDTO;
     }
 
+    default ReviewDTO requestToDTO(RequestReviewDto requestReviewDto){
+
+        ReviewDTO reviewDTO = ReviewDTO.builder()
+                .reviewRating(requestReviewDto.getReviewRating())
+                .comment(requestReviewDto.getComment())
+                .build();
+
+        return reviewDTO;
+    }
+
+   ;
 }

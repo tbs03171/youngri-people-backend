@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -25,7 +26,6 @@ public class Review {
     @Column(name = "REVIEW_ID")
     private Long id;
     private String comment;
-    private int likeCount;
     private int reviewRating;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,6 +57,7 @@ public class Review {
     public void changDateTime(LocalDateTime localDateTime){
         this.modifiedDate = localDateTime;
     }
+
 
 
 }

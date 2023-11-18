@@ -14,26 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
-public class ReviewDTO {
-
-    private Long id;
-    private Long movieid;
-    private Long memberid;
+public class RequestReviewDto {
     private int reviewRating;
     private String comment;
-    private String userid;
-
-
-
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdDate;
-
-    @LastModifiedBy
-    private LocalDateTime modifiedDate;
-
-
-
-
 
 }

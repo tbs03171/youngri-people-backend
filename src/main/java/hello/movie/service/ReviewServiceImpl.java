@@ -1,10 +1,14 @@
 package hello.movie.service;
 
+import hello.movie.dto.RequestReviewDto;
 import hello.movie.dto.ReviewDTO;
+import hello.movie.model.Member;
+import hello.movie.model.Movie;
 import hello.movie.model.Review;
 import hello.movie.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,11 +22,18 @@ public class ReviewServiceImpl implements ReviewService{
 
 
     @Override
-    public List<ReviewDTO> getListOFMovie() {
-        List<Review> result = reviewRepository.findAll();
+    public List<ReviewDTO> getListOFMovie(Long movieid) {
+        Movie movie = Movie.builder().id(movieid).build();
+        List<Review> result = reviewRepository.findByMovie(movie);
         return result.stream().map(movieReview -> entityToDTO(movieReview)).collect(Collectors.toList());
     }
 
+    @Override
+    public List<ReviewDTO> getListOFMember(Long memberid) {
+        Member member = Member.builder().id(memberid).build();
+        List<Review> result = reviewRepository.findByMember(member);
+        return result.stream().map(movieReview -> entityToDTO(movieReview)).collect(Collectors.toList());
+    }
     @Override
     public Long register(ReviewDTO reviewDTO){
         Review review = dtoToEntity(reviewDTO);
@@ -33,11 +44,11 @@ public class ReviewServiceImpl implements ReviewService{
     }
 
     @Override
-    public void modify(ReviewDTO reviewDTO,Long id){
+    public void modify(RequestReviewDto requestReviewDto, Long id){
         Review review= reviewRepository.findById(id).orElseThrow(RuntimeException::new);
 
-        review.changeComment(reviewDTO.getComment());
-        review.changeGrade(reviewDTO.getReviewRating());
+        review.changeComment(requestReviewDto.getComment());
+        review.changeGrade(requestReviewDto.getReviewRating());
         review.changDateTime(LocalDateTime.now());
         reviewRepository.save(review);
 
@@ -51,8 +62,10 @@ public class ReviewServiceImpl implements ReviewService{
 
     @Override
     public Review findOne(Long id) {
-        return null;
+        Review review = reviewRepository.findById(id).orElseThrow(NullPointerException::new);
+        return review;
     }
+
 
 
 }
