@@ -14,7 +14,7 @@ public interface FollowerRepository extends JpaRepository<Follow, Long> {
 
     Follow save(Follow follow);
     void deleteByFollowerIdAndFolloweeId(Long followerId, Long followeeId);
-    @Query("select FollowResponseDto(f.followee.id, f.followee.profilePath, f.followee.nickname, f.followee.userId)" +
+    @Query("select new hello.movie.dto.FollowResponseDto(f.followee.id, f.followee.profilePath, f.followee.nickname, f.followee.userId)" +
             " from Follow f where f.follower.id = :id")
     List<FollowResponseDto> findAllFolloweeByFollower(@Param("id") Long memberId);
     Boolean existsByFollowerIdAndFolloweeId(Long followerId, Long followingId);

@@ -34,7 +34,7 @@ public class FollowController {
     }
 
     //언팔로우 기능
-    @PostMapping("/unfollow/{followingId}")
+    @DeleteMapping("/{followingId}")
     public ResponseEntity<CustomResponse> unfollow(@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long followingId){
         Long followerId = principalDetails.getMember().getId();
 
