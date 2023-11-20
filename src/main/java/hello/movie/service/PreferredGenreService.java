@@ -46,7 +46,7 @@ public class PreferredGenreService {
      * 선호 장르 업데이트
      */
     @Transactional
-    public void updatePreferredGenre(Long memberId, List<Long> genreIds) {
+    public Optional<List<Genre>> updatePreferredGenre(Long memberId, List<Long> genreIds) {
         // 기존 선호 장르 모두 삭제
         Member member = memberRepository.findById(memberId).get();
         preferredGenreRepository.deleteByMember(member);
@@ -58,6 +58,9 @@ public class PreferredGenreService {
                     .member(member)
                     .build());
         }
+
+        // 업데이트 결과 선호장르 리스트 반환
+        return getPreferredGenres(memberId);
     }
 
 //    /**

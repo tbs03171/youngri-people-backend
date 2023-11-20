@@ -50,10 +50,13 @@ public class PreferredGenreController {
     @PutMapping("")
     public ResponseEntity<CustomResponse> updatePreferredGenre(@RequestBody List<Long> genreIds, @AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long memberId = principalDetails.getMember().getId();
-        preferredGenreService.updatePreferredGenre(memberId, genreIds);
+        Optional<List<Genre>> preferredGenres = preferredGenreService.updatePreferredGenre(memberId, genreIds);
+
         CustomResponse response = CustomResponse.builder()
                 .message("선호 장르 업데이트 성공")
+                .data(preferredGenres.get())
                 .build();
+
         return ResponseEntity.ok(response);
     }
 

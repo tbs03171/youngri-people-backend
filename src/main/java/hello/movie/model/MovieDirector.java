@@ -31,4 +31,7 @@ public class MovieDirector {
     public void setMovie(Movie movie) {
         this.movie = movie;
     }
+
+    public MovieDirector() {
+    }
 }
