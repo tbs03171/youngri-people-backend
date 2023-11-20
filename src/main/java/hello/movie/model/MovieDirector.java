@@ -3,6 +3,7 @@ package hello.movie.model;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
@@ -29,5 +30,8 @@ public class MovieDirector {
 
     public void setMovie(Movie movie) {
         this.movie = movie;
+    }
+
+    public MovieDirector() {
     }
 }
