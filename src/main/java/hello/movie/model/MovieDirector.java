@@ -1,8 +1,10 @@
 package hello.movie.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
@@ -26,7 +28,6 @@ public class MovieDirector {
 //    private String character;
 
     private String profilePath;
-
     public void setMovie(Movie movie) {
         this.movie = movie;
     }

@@ -5,7 +5,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+import java.awt.print.Book;
+import java.util.Optional;
+
+@Entity(name = "BOOKMARK")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BookMark {
@@ -22,11 +25,13 @@ public class BookMark {
     @ManyToOne
     @JoinColumn(name = "MOVIE_ID")
     private Movie movie;
-    private Integer bookmarkStatus;
+    private Boolean bookmarkStatus;
 
-    public BookMark(Member member, Movie movie, Integer bookmarkStatus) {
-        this.member = member;
-        this.movie = movie;
-        this.bookmarkStatus = bookmarkStatus;
+    public static BookMark createBookMark(Member member, Movie movie) {
+        BookMark bookMark = new BookMark();
+        bookMark.member = member;
+        bookMark.movie = movie;
+        bookMark.bookmarkStatus = true;
+        return bookMark;
     }
 }

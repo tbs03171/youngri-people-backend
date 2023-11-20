@@ -1,5 +1,6 @@
 package hello.movie.repository;
 
+import hello.movie.dto.MovieListDto;
 import hello.movie.model.BookMark;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +13,6 @@ import java.util.Optional;
 public interface BookMarkRepository extends JpaRepository<BookMark, Long> {
 
     BookMark save(BookMark bookMark);
-    Optional<BookMark> findById(Long bookmarkId);
-    void delete(BookMark bookMark);
-    List<BookMark> findMovieByMemberId(Long memberId);
+    void deleteByMemberIdAndMovieId(Long memberId, Long movieId);
+    List<MovieListDto> findMovieListDtoByMemberId(Long memberId);
 }

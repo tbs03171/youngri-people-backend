@@ -66,8 +66,6 @@ public class LoginController {
     @PostMapping("/logout")
     public ResponseEntity<CustomResponse> logout(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
-
-
         CustomResponse response = CustomResponse.builder()
                 .message("로그아웃 성공")
                 .build();
