@@ -6,6 +6,8 @@ import hello.movie.auth.PrincipalDetails;
 import hello.movie.dto.MovieDto;
 import hello.movie.dto.MovieListDto;
 import hello.movie.model.Genre;
+import hello.movie.model.Mbti;
+import hello.movie.model.Member;
 import hello.movie.service.MovieService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -152,6 +154,48 @@ public class MovieController {
                 .data(movieListDto.get())
                 .build();
 
+        return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/recommended-by-genre")
+    public ResponseEntity<CustomResponse> getRecommendedMoviesByPreferredGenre(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Long memberId = principalDetails.getMember().getId();
+        Optional<List<MovieListDto>> movieListDto = movieService.getRecommendedMoviesByPreferredGenre(memberId);
+
+        // 선호 장르 없는 경우
+        if (movieListDto.isEmpty()) {
+            CustomResponse response = CustomResponse.builder()
+                    .message("선호 장르가 등록되지 않음")
+                    .build();
+            return ResponseEntity.ok(response);
+        }
+
+        CustomResponse response = CustomResponse.builder()
+                .message("선호 장르 기반 영화 추천 성공")
+                .data(movieListDto.get())
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/recommended-by-mbti")
+    public ResponseEntity<CustomResponse> getRecommendedMoviesByMbti(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+        Mbti mbti = principalDetails.getMember().getMbti();
+
+        // MBTI 등록 안한 경우
+        if (mbti == null) {
+            CustomResponse response = CustomResponse.builder()
+                    .message("MBTI가 등록되지 않음")
+                    .build();
+            return ResponseEntity.ok(response);
+        }
+
+        Optional<List<MovieListDto>> movieListDto = movieService.getRecommendedMoviesByMbti(mbti);
+        CustomResponse response = CustomResponse.builder()
+                .message(mbti + "가 좋아하는 영화 추천 성공")
+                .data(movieListDto.get())
+                .build();
         return ResponseEntity.ok(response);
     }
 
