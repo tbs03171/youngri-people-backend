@@ -182,10 +182,18 @@ public class MovieController {
     @GetMapping("/recommended-by-mbti")
     public ResponseEntity<CustomResponse> getRecommendedMoviesByMbti(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         Mbti mbti = principalDetails.getMember().getMbti();
-        Optional<List<MovieListDto>> movieListDto = movieService.getRecommendedMoviesByMbti(mbti);
 
+        // MBTI 등록 안한 경우
+        if (mbti == null) {
+            CustomResponse response = CustomResponse.builder()
+                    .message("MBTI가 등록되지 않음")
+                    .build();
+            return ResponseEntity.ok(response);
+        }
+
+        Optional<List<MovieListDto>> movieListDto = movieService.getRecommendedMoviesByMbti(mbti);
         CustomResponse response = CustomResponse.builder()
-                .message("MBTI 기반 영화 추천 성공")
+                .message(mbti + "가 좋아하는 영화 추천 성공")
                 .data(movieListDto.get())
                 .build();
         return ResponseEntity.ok(response);
