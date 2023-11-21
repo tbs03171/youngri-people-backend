@@ -10,6 +10,8 @@ import java.util.List;
 @Entity
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Movie {
 
     @Id
@@ -66,4 +68,7 @@ public class Movie {
         director = movieDirector;
         movieDirector.setMovie(this);
     }
+//
+//    public Movie() {
+//    }
 }
