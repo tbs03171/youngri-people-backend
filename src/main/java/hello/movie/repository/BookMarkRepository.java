@@ -15,9 +15,6 @@ public interface BookMarkRepository extends JpaRepository<BookMark, Long> {
 
     BookMark save(BookMark bookMark);
     void deleteByMemberIdAndMovieId(Long memberId, Long movieId);
-
-    @Query("select b.movie from BOOKMARK b where b.id =:memberId")
-    List<Movie> findMovieAllByMemberId(Long memberId);
-
-    //List<Movie> findMovieListDtoAllByMemberId(Long memberId);
+    List<BookMark> findAllByMemberId(Long memberId);
+    boolean existsByMemberIdAndMovieId(Long memberId, Long movieId);
 }
