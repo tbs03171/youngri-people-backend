@@ -50,12 +50,27 @@ public class BookMarkController {
         return ResponseEntity.ok(response);
     }
 
+    //북마크 상태 확인
+    @GetMapping("/status/{movieId}")
+    public ResponseEntity<CustomResponse> checkBookMarkStatus(@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long movieId){
+        Long memberId = principalDetails.getMember().getId();
+
+        boolean status = bookMarkService.isBookMark(memberId, movieId);
+
+        CustomResponse response = CustomResponse.builder()
+                .message("북마크 상태 유무")
+                .data(status)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
     //memberId로 전체 북마크 movie 조회
     @GetMapping("/bookmarks")
     public ResponseEntity<CustomResponse> getAllBookMarks(@AuthenticationPrincipal PrincipalDetails principalDetails){
         Long memberId = principalDetails.getMember().getId();
 
-        List<MovieListDto> bookMarkList = bookMarkService.getAllBookMarks(memberId);
+        List<MovieListDto> bookMarkList = bookMarkService.getBookMarksList(memberId);
 
         CustomResponse response = CustomResponse.builder()
                 .message("memberId로 찜한 모든 북마크 조회 성공")
