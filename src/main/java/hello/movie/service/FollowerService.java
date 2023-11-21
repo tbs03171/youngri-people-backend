@@ -41,4 +41,8 @@ public class FollowerService {
     public List<FollowResponseDto> getFollowersList(Long memberId) {
         return followerRepository.findAllFolloweeByFollower(memberId);
     }
+
+    public Follow getFollower(Long followerId, Long followingId) {
+        return followerRepository.findByFollowerIdAndFolloweeId(followerId, followingId);
+    }
 }

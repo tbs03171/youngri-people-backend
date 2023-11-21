@@ -2,6 +2,7 @@ package hello.movie.repository;
 
 import hello.movie.dto.FollowResponseDto;
 import hello.movie.model.Follow;
+import hello.movie.model.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +19,5 @@ public interface FollowerRepository extends JpaRepository<Follow, Long> {
             " from Follow f where f.follower.id = :id")
     List<FollowResponseDto> findAllFolloweeByFollower(@Param("id") Long memberId);
     Boolean existsByFollowerIdAndFolloweeId(Long followerId, Long followingId);
+    Follow findByFollowerIdAndFolloweeId(Long followerId, Long followingId);
 }
