@@ -68,4 +68,7 @@ public class Movie {
         director = movieDirector;
         movieDirector.setMovie(this);
     }
+//
+//    public Movie() {
+//    }
 }

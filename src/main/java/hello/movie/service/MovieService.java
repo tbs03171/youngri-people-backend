@@ -2,6 +2,7 @@ package hello.movie.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import hello.movie.model.Genre;
+import hello.movie.model.Mbti;
 import hello.movie.model.Movie;
 import hello.movie.dto.MovieDto;
 import hello.movie.dto.MovieListDto;
@@ -21,6 +22,7 @@ public class MovieService {
 
     private final MovieRepository movieRepository;
     private final TMDBApiService tmdbApiService;
+    private final PreferredGenreService preferredGenreService;
     private final ModelMapper modelMapper = new ModelMapper();
 
     /**
@@ -105,6 +107,42 @@ public class MovieService {
 
 
     /**
+     * 선호 장르 기반 영화 추천
+     */
+    public Optional<List<MovieListDto>> getRecommendedMoviesByPreferredGenre(Long memberId) {
+        // member의 선호 장르 꺼내서
+        Optional<List<Genre>> preferredGenres = preferredGenreService.getPreferredGenres(memberId);
+
+        // 선호 장르가 없는 경우
+        if (preferredGenres.get().isEmpty()) return Optional.empty();
+
+        // 선호장르를 String 으로 변환
+        List<String> genres = new ArrayList<>();
+        for (Genre genre : preferredGenres.get()) {
+            genres.add(genre.toString());
+        }
+
+        // 해당 장르의 영화들 꺼내서 반환
+        return getMoviesByGenres(genres);
+    }
+
+
+    /**
+     * MBTI 기반 영화 추천
+     */
+    public Optional<List<MovieListDto>> getRecommendedMoviesByMbti(Mbti mbti) {
+        Optional<List<Movie>> topRatedMoviesByMbti = movieRepository.findTopRatedMoviesByMbti(mbti);
+
+        List<MovieListDto> movieListDtos = new ArrayList<>();
+        for (Movie movie : topRatedMoviesByMbti.get()) {
+            movieListDtos.add(convertToMovieListDto(movie));
+        }
+
+        return Optional.of(movieListDtos);
+    }
+
+
+    /**
      * 감독 혹은 배우 필모그래피 조회
      */
     public Optional<List<MovieListDto>> getFilmographyByPerson(Long personId) {
@@ -119,4 +157,10 @@ public class MovieService {
         return modelMapper.map(movie, MovieDto.class);
     }
 
+    /**
+     * Movie 엔티티를 MovieListDto로 변환
+     */
+    public MovieListDto convertToMovieListDto(Movie movie) {
+        return modelMapper.map(movie, MovieListDto.class);
+    }
 }
