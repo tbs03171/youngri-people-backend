@@ -11,6 +11,7 @@ import java.util.List;
 
 @Getter @Setter
 public class MovieDto {
+    private Long id;
     private String title;
     private String overview;
     private LocalDate releaseDate;
