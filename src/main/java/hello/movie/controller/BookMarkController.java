@@ -19,7 +19,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
 @RestController
-@RequestMapping("/api/bookmarks")
+@RequestMapping("/api/bookmark")
 public class BookMarkController {
 
     private final BookMarkService bookMarkService;
@@ -51,7 +51,7 @@ public class BookMarkController {
     }
 
     //memberId로 전체 북마크 movie 조회
-    @GetMapping("/")
+    @GetMapping("/bookmarks")
     public ResponseEntity<CustomResponse> getAllBookMarks(@AuthenticationPrincipal PrincipalDetails principalDetails){
         Long memberId = principalDetails.getMember().getId();
 

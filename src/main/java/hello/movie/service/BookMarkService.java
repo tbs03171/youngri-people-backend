@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +24,7 @@ public class BookMarkService {
     private final BookMarkRepository bookMarkRepository;
     private final MemberRepository memberRepository;
     private final MovieRepository movieRepository;
+    private final MovieService movieService;
 
     @Transactional
     public void saveBookMark(Long memberId, Long movieId) {
@@ -39,6 +41,11 @@ public class BookMarkService {
     }
 
     public List<MovieListDto> getAllBookMarks(Long memberId) {
-        return bookMarkRepository.findMovieListDtoByMemberId(memberId);
+        List<Movie> movieList = bookMarkRepository.findMovieAllByMemberId(memberId);
+        List<MovieListDto> movieListDto = new ArrayList<>();
+        for (Movie movie : movieList) {
+            movieListDto.add(movieService.convertToMovieListDto(movie));
+        }
+        return movieListDto;
     }
 }
