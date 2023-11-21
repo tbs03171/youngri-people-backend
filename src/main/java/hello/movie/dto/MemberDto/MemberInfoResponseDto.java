@@ -10,6 +10,7 @@ import lombok.Setter;
 @Builder
 public class MemberInfoResponseDto {
 
+    private Long id;
     private String profilePath;
     private String name;
     private String nickname;

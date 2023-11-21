@@ -65,6 +65,7 @@ public class MemberController {
 
     private static MemberInfoResponseDto createMemberInfoResponseDto(Member member) {
         return MemberInfoResponseDto.builder()
+                .id(member.getId())
                 .profilePath(member.getProfilePath())
                 .name(member.getName())
                 .nickname(member.getNickname())
