@@ -26,14 +26,20 @@ public class AppStartupRunner implements CommandLineRunner {
      */
     private void createTestMember() throws JsonProcessingException {
         // 계정 하나 생성
-        CreateMemberDto createMemberDto = new CreateMemberDto();
-        createMemberDto.setUserId("test");
-        createMemberDto.setPassword("0000");
+        CreateMemberDto createMemberDto1 = new CreateMemberDto();
+        createMemberDto1.setUserId("test");
+        createMemberDto1.setPassword("0000");
+
+        // 계정 하나 생성
+        CreateMemberDto createMemberDto2 = new CreateMemberDto();
+        createMemberDto2.setUserId("test2");
+        createMemberDto2.setPassword("0000");
 
         // 영화 데이터
         movieService.getMovieById(496243L);
         movieService.getMovieById(372058L);
 
-        memberService.join(createMemberDto);
+        memberService.join(createMemberDto1);
+        memberService.join(createMemberDto2);
     }
 }

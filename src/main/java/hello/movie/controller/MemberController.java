@@ -38,7 +38,7 @@ public class MemberController {
 
         Member member = memberService.findById(memberId).get();
 
-        MemberInfoResponseDto memberInfoResponseDto = createMemberInfoResponseDto(member);
+        MemberInfoResponseDto memberInfoResponseDto = memberService.createMemberInfoResponseDto(member);
 
         CustomResponse response = CustomResponse.builder()
                 .message("내 마이페이지 정보 조회 성공")
@@ -55,7 +55,7 @@ public class MemberController {
 
         Member member = memberService.update(memberId, updateMemberDto);
 
-        MemberInfoResponseDto memberInfoResponseDto = createMemberInfoResponseDto(member);
+        MemberInfoResponseDto memberInfoResponseDto = memberService.createMemberInfoResponseDto(member);
         CustomResponse response = CustomResponse.builder()
                 .message("회원 정보 수정 성공")
                 .data(memberInfoResponseDto)
@@ -63,26 +63,15 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    private static MemberInfoResponseDto createMemberInfoResponseDto(Member member) {
-        return MemberInfoResponseDto.builder()
-                .id(member.getId())
-                .profilePath(member.getProfilePath())
-                .name(member.getName())
-                .nickname(member.getNickname())
-                .userId(member.getUserId())
-                .mbti(member.getMbti())
-                .build();
-    }
-
     //커뮤니티 화면에서 사용자 전체 보기
     @ApiResponse(responseCode = "200", description = "모든 멤버 정보 조회 성공")
     @GetMapping("/search")
     public ResponseEntity<CustomResponse> getAllMembers(){
-        Optional<List<Member>> members = memberService.findMembers();
+        List<Member> members = memberService.findMembers();
 
         List<SearchMemberResponseDto> searchMemberResponseDtoList = new ArrayList<>();
-        for (Member member : members.get()) {
-            SearchMemberResponseDto searchMemberResponseDto = createSearchMemberResponseDto(member);
+        for (Member member : members) {
+            SearchMemberResponseDto searchMemberResponseDto = memberService.createSearchMemberResponseDto(member);
             searchMemberResponseDtoList.add(searchMemberResponseDto);
         }
 
@@ -99,7 +88,7 @@ public class MemberController {
             @ApiResponse(responseCode = "400", description = "일치하는 닉네임이 없어 실패")})
     @GetMapping("/search/nickname")
     public ResponseEntity<CustomResponse> getMemberByNickname(@RequestParam("nickname") String nickname){
-        Optional<List<Member>> findMembers = memberService.findByNickname(nickname);
+        List<Member> findMembers = memberService.findByNickname(nickname);
 
         if(findMembers.isEmpty()){
             CustomResponse response = CustomResponse.builder()
@@ -109,8 +98,8 @@ public class MemberController {
         }
 
         List<SearchMemberResponseDto> searchMemberResponseDtoList = new ArrayList<>();
-        for (Member member : findMembers.get()) {
-            SearchMemberResponseDto searchMemberResponseDto = createSearchMemberResponseDto(member);
+        for (Member member : findMembers) {
+            SearchMemberResponseDto searchMemberResponseDto = memberService.createSearchMemberResponseDto(member);
             searchMemberResponseDtoList.add(searchMemberResponseDto);
         }
 
@@ -137,22 +126,13 @@ public class MemberController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        SearchMemberResponseDto searchMemberResponseDto = createSearchMemberResponseDto(findMember.get());
+        SearchMemberResponseDto searchMemberResponseDto = memberService.createSearchMemberResponseDto(findMember.get());
 
         CustomResponse response = CustomResponse.builder()
                 .message("아이디로 사용자 정보 조회 성공")
                 .data(searchMemberResponseDto)
                 .build();
         return ResponseEntity.ok(response);
-    }
-
-    private static SearchMemberResponseDto createSearchMemberResponseDto(Member member) {
-        return SearchMemberResponseDto.builder()
-                .id(member.getId())
-                .profilePath(member.getProfilePath())
-                .nickname(member.getNickname())
-                .userId(member.getUserId())
-                .build();
     }
 
     @ApiResponses(value = {

@@ -2,19 +2,15 @@ package hello.movie.controller;
 
 import hello.movie.CustomResponse;
 import hello.movie.auth.PrincipalDetails;
-import hello.movie.dto.CreateBookMarkDto;
 import hello.movie.dto.MovieListDto;
-import hello.movie.model.BookMark;
 import hello.movie.service.BookMarkService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")

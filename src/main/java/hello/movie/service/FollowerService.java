@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,10 +40,26 @@ public class FollowerService {
     }
 
     public List<FollowResponseDto> getFollowersList(Long memberId) {
-        return followerRepository.findAllFolloweeByFollower(memberId);
+        List<Follow> followList = followerRepository.findAllByFollowerId(memberId);
+
+        List<FollowResponseDto> followResponseDtoList = new ArrayList<>();
+        for (Follow follow : followList) {
+            followResponseDtoList.add(createFollowResponseDto(follow.getFollowee()));
+        }
+        return followResponseDtoList;
     }
 
-    public Follow getFollower(Long followerId, Long followingId) {
-        return followerRepository.findByFollowerIdAndFolloweeId(followerId, followingId);
+    public FollowResponseDto getFollower(Long followerId, Long followingId) {
+        Follow follow = followerRepository.findByFollowerIdAndFolloweeId(followerId, followingId);
+        return createFollowResponseDto(follow.getFollowee());
+    }
+
+    public FollowResponseDto createFollowResponseDto(Member member){
+        return FollowResponseDto.builder()
+                .id(member.getId())
+                .profilePath(member.getProfilePath())
+                .nickname(member.getNickname())
+                .userId(member.getUserId())
+                .build();
     }
 }

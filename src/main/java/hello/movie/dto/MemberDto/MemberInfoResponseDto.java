@@ -1,13 +1,13 @@
 package hello.movie.dto.MemberDto;
 
 import hello.movie.model.Mbti;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
+@AllArgsConstructor
 public class MemberInfoResponseDto {
 
     private Long id;
