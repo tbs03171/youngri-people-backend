@@ -22,6 +22,7 @@ public class ReviewDTO {
     private int reviewRating;
     private String comment;
     private String userid;
+    private String movieName;
 
 
 

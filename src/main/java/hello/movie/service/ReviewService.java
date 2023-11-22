@@ -50,6 +50,7 @@ public interface ReviewService {
                 .modifiedDate(review.getModifiedDate())
                 .createdDate(review.getCreatedDate())
                .movieid(review.getMovie().getId())
+                .movieName(review.getMovie().getTitle())
                 .build();
 
         return reviewDTO;
