@@ -10,6 +10,8 @@ import java.util.Optional;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor
 public class Member {
 
     @Id
@@ -31,23 +33,6 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private Mbti mbti;
-
-
-    @Builder
-    public Member(Long id,String userId, String password, String name, String phoneNumber,
-                  Gender gender, Date birthDate, String profilePath, String nickname,
-                  Mbti mbti) {
-        this.id=id;
-        this.userId = userId;
-        this.password = password;
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.gender = gender;
-        this.birthDate = birthDate;
-        this.profilePath = profilePath;
-        this.nickname = nickname;
-        this.mbti = mbti;
-    }
 
     public Member updateMember(UpdateMemberDto memberDto){
         Optional.ofNullable(memberDto.getNickname()).ifPresent(nickname -> this.nickname = nickname);
