@@ -2,7 +2,7 @@ package hello.movie.dto.MemberDto;
 
 import hello.movie.model.Gender;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -21,5 +21,4 @@ public class CreateMemberDto {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthDate;
     private String nickname;
-
 }

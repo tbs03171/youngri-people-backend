@@ -12,7 +12,7 @@ public interface MemberRepository extends JpaRepository<Member, Long>{
     List<Member> findAll();
     Optional<Member> findById(Long id);
     Optional<Member> findByUserId(String userId);
-    Optional<List<Member>> findAllByNickname(String nickname);
+    List<Member> findAllByNickname(String nickname);
 
 
 }

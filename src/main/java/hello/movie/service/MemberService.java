@@ -1,25 +1,22 @@
 package hello.movie.service;
 
-import hello.movie.CustomResponse;
 import hello.movie.dto.MemberDto.CreateMemberDto;
+import hello.movie.dto.MemberDto.MemberInfoResponseDto;
+import hello.movie.dto.MemberDto.SearchMemberResponseDto;
 import hello.movie.dto.MemberDto.UpdateMemberDto;
 import hello.movie.model.Member;
 import hello.movie.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Slf4j
 public class MemberService {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -31,7 +28,7 @@ public class MemberService {
         Optional<Member> findMember = memberRepository.findByUserId(memberDto.getUserId());
 
         if (findMember.isEmpty()) {
-            Member member = createMemberDtotoMember(memberDto);
+            Member member = CreateMemberDtoToMember(memberDto);
             memberRepository.save(member);
             return Optional.of(member);
         } else {
@@ -40,7 +37,6 @@ public class MemberService {
     }
 
     //회원 정보 수정
-    // update시 입력하지 않은 값 null로 처리되는 문제 발생
     @Transactional
     public Member update(Long memberId, UpdateMemberDto updateMemberDto) {
         Optional<Member> member = findById(memberId);
@@ -48,8 +44,8 @@ public class MemberService {
     }
 
     //회원 전쳬 조회
-    public Optional<List<Member>> findMembers() {
-        return Optional.of(memberRepository.findAll());
+    public List<Member> findMembers() {
+        return memberRepository.findAll();
     }
 
     //회원 id로 조회
@@ -58,7 +54,7 @@ public class MemberService {
     }
 
     //회원 nickname으로 조회
-    public Optional<List<Member>> findByNickname(String nickname) {
+    public List<Member> findByNickname(String nickname) {
         return memberRepository.findAllByNickname(nickname);
     }
 
@@ -67,7 +63,7 @@ public class MemberService {
         return memberRepository.findByUserId(userId);
     }
 
-    public Member createMemberDtotoMember(CreateMemberDto memberDto) {
+    public Member CreateMemberDtoToMember(CreateMemberDto memberDto) {
             Member member = Member.builder()
                     .userId(memberDto.getUserId())
                     .password(bCryptPasswordEncoder.encode(memberDto.getPassword()))
@@ -78,5 +74,25 @@ public class MemberService {
                     .nickname(memberDto.getNickname())
                     .build();
             return member;
+    }
+
+    public MemberInfoResponseDto createMemberInfoResponseDto(Member member) {
+        return MemberInfoResponseDto.builder()
+                .id(member.getId())
+                .profilePath(member.getProfilePath())
+                .name(member.getName())
+                .nickname(member.getNickname())
+                .userId(member.getUserId())
+                .mbti(member.getMbti())
+                .build();
+    }
+
+    public SearchMemberResponseDto createSearchMemberResponseDto(Member member) {
+        return SearchMemberResponseDto.builder()
+                .id(member.getId())
+                .profilePath(member.getProfilePath())
+                .nickname(member.getNickname())
+                .userId(member.getUserId())
+                .build();
     }
 }

@@ -1,11 +1,7 @@
 package hello.movie.controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import hello.movie.CustomResponse;
-import hello.movie.auth.PrincipalDetails;
 import hello.movie.dto.LoginDto;
-import hello.movie.jwt.JwtProperties;
 import hello.movie.model.Member;
 import hello.movie.service.LoginService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,13 +11,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.Optional;
-
 
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
@@ -62,7 +55,7 @@ public class LoginController {
         return ResponseEntity.ok(response);
     }
 
-    //로그아웃 하기
+    /*//로그아웃 하기
     @PostMapping("/logout")
     public ResponseEntity<CustomResponse> logout(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 
@@ -81,5 +74,5 @@ public class LoginController {
                 .withClaim("userId", principalDetails.getMember().getUserId())
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
         return jwtToken;
-    }
+    }*/
 }

@@ -3,8 +3,6 @@ package hello.movie.controller;
 import hello.movie.CustomResponse;
 import hello.movie.auth.PrincipalDetails;
 import hello.movie.dto.FollowResponseDto;
-import hello.movie.model.Follow;
-import hello.movie.model.Member;
 import hello.movie.service.FollowerService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -75,7 +73,6 @@ public class FollowController {
                 .data(followersList)
                 .build();
         return ResponseEntity.ok(response);
-
     }
 
     //팔로우 한 사람의 상세 정보 조회
@@ -83,8 +80,8 @@ public class FollowController {
     public ResponseEntity<CustomResponse> getFollowerInfo(@AuthenticationPrincipal PrincipalDetails principalDetails, @PathVariable Long followingId){
         Long followerId = principalDetails.getMember().getId();
 
-        Follow follow = followerService.getFollower(followerId, followingId);
-        FollowResponseDto followResponseDto = FollowResponseDto.createFollowResponseDto(follow.getFollowee());
+        FollowResponseDto followResponseDto = followerService.getFollower(followerId, followingId);
+
 
         CustomResponse response = CustomResponse.builder()
                 .message("팔로우 한 사람의 상세 정보 조회 성공")

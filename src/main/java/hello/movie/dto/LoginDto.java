@@ -1,13 +1,18 @@
 package hello.movie.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@Data
+@Getter
+@NoArgsConstructor
 public class LoginDto {
 
     @NotBlank
     private String userId;
     @NotBlank
     private String password;
+
+
 }

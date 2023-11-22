@@ -1,6 +1,5 @@
 package hello.movie.service;
 
-import hello.movie.dto.CreateBookMarkDto;
 import hello.movie.dto.MovieListDto;
 import hello.movie.model.BookMark;
 import hello.movie.model.Member;
@@ -9,7 +8,6 @@ import hello.movie.repository.BookMarkRepository;
 import hello.movie.repository.MemberRepository;
 import hello.movie.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
