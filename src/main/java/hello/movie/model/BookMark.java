@@ -5,9 +5,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.awt.print.Book;
-import java.util.Optional;
-
 @Entity(name = "BOOKMARK")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,11 +15,11 @@ public class BookMark {
     @Column(name = "BOOKMARK_ID")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MOVIE_ID")
     private Movie movie;
     private Boolean bookmarkStatus;
