@@ -1,6 +1,5 @@
 package hello.movie.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import hello.movie.dto.MovieListDto;
 import hello.movie.model.*;
@@ -8,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -35,30 +33,23 @@ public class TMDBApiService {
     /**
      * 영화 상세 정보 조회
      */
-    public Optional<Movie> getMovieById(Long movieId) throws JsonProcessingException {
+    public Movie getMovieById(Long movieId) {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/movie/{movieId}")
                 .queryParam("api_key", KEY)
                 .queryParam("language", "ko-KR")
                 .queryParam("append_to_response", "credits");
-//        builder.buildAndExpand(movieId);
         builder.uriVariables(Collections.singletonMap("movieId", movieId));
 
         // HTTP GET 요청
-        try {
-            ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
+        ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
 
-            // JSON 응답 파싱
-            JsonNode responseBody = response.getBody();
+        // JSON 응답 파싱
+        JsonNode responseBody = response.getBody();
 
-            // 영화 정보 생성
-            Movie movie = parseMovieInfo(responseBody);
-
-            return Optional.of(movie);
-        } catch (HttpClientErrorException e) { // 유효하지 않은 Movie ID
-            return Optional.empty();
-        }
+        // 영화 정보 생성해서 반환
+        return parseMovieInfo(responseBody);
     }
 
 
