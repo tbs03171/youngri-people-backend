@@ -10,8 +10,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MovieRepository extends JpaRepository<Movie, Long> {
-    boolean existsByTmdbId(Long tmdbId);
-    Optional<Movie> findByTmdbId(Long tmdbId);
+    /**
+     * TMDB ID로 MOVIE ID 조회
+     */
+    @Query("SELECT m.id FROM Movie m WHERE m.tmdbId = :tmdbId")
+    Optional<Long> findIdByTmdbId(Long tmdbId);
 
     /**
      * MBTI를 기반으로 사용자들이 본 영화 조회
