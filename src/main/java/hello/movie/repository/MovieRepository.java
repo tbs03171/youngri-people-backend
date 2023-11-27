@@ -10,17 +10,21 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MovieRepository extends JpaRepository<Movie, Long> {
-    boolean existsByTmdbId(Long tmdbId);
-    Optional<Movie> findByTmdbId(Long tmdbId);
+    /**
+     * TMDB ID로 MOVIE ID 조회
+     */
+    @Query("SELECT m.id FROM Movie m WHERE m.tmdbId = :tmdbId")
+    Optional<Long> findIdByTmdbId(Long tmdbId);
 
     /**
-     * MBTI를 기반으로 사용자들이 본 영화 조회
+     * MBTI를 기반으로 해당 MBTI를 가진 사용자들이 별점을 높게 평가한 영화 조회
      */
-    @Query("SELECT DISTINCT m FROM Movie m " +
-            "WHERE EXISTS (" +
-            " SELECT 1 FROM Review r " +
-            " JOIN r.member mb " +
-            " WHERE m = r.movie AND mb.mbti = :mbti" +
-            ")")
-    Optional<List<Movie>> findTopRatedMoviesByMbti(@Param("mbti")Mbti mbti);
+    @Query("SELECT DISTINCT m, AVG(r.reviewRating) AS avgRating " +
+            "FROM Movie m " +
+            "JOIN Review r ON m.id = r.movie.id " +
+            "JOIN Member mb ON r.member.id = mb.id " +
+            "WHERE mb.mbti = :mbti " +
+            "GROUP BY m.id " +
+            "ORDER BY avgRating DESC")
+    Optional<List<Object[]>> findTopRatedMoviesByMbti(@Param("mbti")Mbti mbti);
 }
