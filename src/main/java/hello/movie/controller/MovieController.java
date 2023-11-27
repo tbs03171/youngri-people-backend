@@ -36,7 +36,7 @@ public class MovieController {
             @ApiResponse(responseCode = "404", description = "올바르지 않은 Movie ID"),
             @ApiResponse(responseCode = "200", description = "영화 상세 정보 조회 성공")})
     @GetMapping("/{movieId}")
-    public ResponseEntity<CustomResponse> getMovieDetails(@PathVariable Long movieId) throws JsonProcessingException {
+    public ResponseEntity<CustomResponse> getMovieDetails(@PathVariable Long movieId) {
         Optional<MovieDto> movieDto = movieService.getMovieById(movieId);
 
         // 조회 실패
@@ -192,6 +192,15 @@ public class MovieController {
         }
 
         Optional<List<MovieListDto>> movieListDto = movieService.getRecommendedMoviesByMbti(mbti);
+
+        // 추천 데이터가 없는 경우
+        if (movieListDto.isEmpty()) {
+            CustomResponse response = CustomResponse.builder()
+                    .message("추천 데이터 없음")
+                    .build();
+            return ResponseEntity.ok(response);
+        }
+
         CustomResponse response = CustomResponse.builder()
                 .message(mbti + "가 좋아하는 영화 추천 성공")
                 .data(movieListDto.get())
