@@ -1,14 +1,14 @@
 package hello.movie.service;
 
-import hello.movie.model.Genre;
-import hello.movie.model.Mbti;
-import hello.movie.model.Movie;
+import hello.movie.dto.MovieDetailDto;
 import hello.movie.dto.MovieDto;
-import hello.movie.dto.MovieListDto;
+import hello.movie.model.*;
+import hello.movie.repository.MovieDetailRepository;
 import hello.movie.repository.MovieRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,7 @@ import java.util.Optional;
 public class MovieService {
 
     private final MovieRepository movieRepository;
+    private final MovieDetailRepository movieDetailRepository;
     private final TMDBApiService tmdbApiService;
     private final PreferredGenreService preferredGenreService;
     private final ModelMapper modelMapper = new ModelMapper();
@@ -26,15 +27,28 @@ public class MovieService {
     /**
      * 영화 상세 정보 조회
      */
-    public Optional<MovieDto> getMovieById(Long movieId) {
+    @Transactional
+    public Optional<MovieDetailDto> getMovieDetailByMovieId(Long movieId) {
         Optional<Movie> movie = movieRepository.findById(movieId);
 
-        // 유효하지 않은 movie id
+        // 존재하지 않는 영화
         if (movie.isEmpty()) return Optional.empty();
 
-        return Optional.of(convertToMovieDto(movie.get()));
-    }
+        // 영화 상세 정보 가져오기
+        Optional<MovieDetail> movieDetail = movieDetailRepository.findByMovieId(movieId);
+        MovieDetailDto movieDetailDto;
+        if (movieDetail.isEmpty()) { // 영화 상세 정보가 없다면 TMDB에서 가져와서 저장
+            MovieDetail saved = movieDetailRepository.save(tmdbApiService.getMovieDetailById(movie.get().getTmdbId()));
+            movieDetailDto = modelMapper.map(saved, MovieDetailDto.class);
+        }
+        else movieDetailDto = modelMapper.map(movieDetail.get(), MovieDetailDto.class);
 
+        movieDetailDto.setTitle(movie.get().getTitle());
+        movieDetailDto.setPosterPath(movie.get().getPosterPath());
+        movieDetailDto.setId(movie.get().getId());
+
+        return Optional.of(movieDetailDto);
+    }
 
     /**
      * 현재 상영중인 영화 조회
@@ -117,7 +131,6 @@ public class MovieService {
         // 해당 장르의 영화들 꺼내서 반환
         return getMoviesByGenres(genres);
     }
-
 
     /**
      * MBTI 기반 영화 추천

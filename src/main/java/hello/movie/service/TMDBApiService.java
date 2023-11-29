@@ -1,7 +1,6 @@
 package hello.movie.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import hello.movie.dto.MovieListDto;
 import hello.movie.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,7 +32,7 @@ public class TMDBApiService {
     /**
      * 영화 상세 정보 조회
      */
-    public Movie getMovieById(Long movieId) {
+    public MovieDetail getMovieDetailById(Long movieId) {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/movie/{movieId}")
@@ -49,7 +48,7 @@ public class TMDBApiService {
         JsonNode responseBody = response.getBody();
 
         // 영화 정보 생성해서 반환
-        return parseMovieInfo(responseBody);
+        return parseMovieDetail(responseBody);
     }
 
 
@@ -262,96 +261,71 @@ public class TMDBApiService {
     /**
      * 영화 상세 정보 파싱
      */
-    private Movie parseMovieInfo(JsonNode responseBody) {
-        Movie movie = Movie.builder()
-                .tmdbId(responseBody.get("id").asLong())
-                .overview(responseBody.get("overview").asText())
-                .posterPath(IMAGE_BASE_URL + responseBody.get("poster_path").asText())
+    private MovieDetail parseMovieDetail(JsonNode responseBody) {
+        MovieDetail movieDetail = MovieDetail.builder()
                 .rating(responseBody.get("vote_average").asDouble())
-                .releaseDate(LocalDate.parse(responseBody.get("release_date").asText(), DateTimeFormatter.ISO_DATE))
-                .title(responseBody.get("title").asText())
+                .overview(responseBody.get("overview").asText())
                 .trailerPath(getTrailerById(responseBody.get("id").asLong()))
+                .releaseDate(LocalDate.parse(responseBody.get("release_date").asText(), DateTimeFormatter.ISO_DATE))
                 .build();
 
-        // 배우 정보 추가
-        JsonNode actorList = responseBody.get("credits").get("cast");
-        for (JsonNode actor : actorList) {
-            movie.addMovieActor(parseActor(actor));
+        // 배우 정보 추가 (5명만 가져오도록)
+        JsonNode actors = responseBody.get("credits").get("cast");
+        int cnt = 0;
+        for (JsonNode actor : actors) {
+            movieDetail.addMovieActor(parseActor(actor));
+            cnt++;
+            if (cnt > 4) break;
         }
 
         // 감독 정보 추가
         JsonNode crewList = responseBody.get("credits").get("crew");
         for (JsonNode crew : crewList) {
             if (crew.get("job").asText().equals("Director")) {
-                movie.setDirector(parseDirector(crew));
+                movieDetail.setDirector(parseDirector(crew));
             }
         }
 
-
-//        // 스탭 정보 추가
-//        JsonNode crewList = responseBody.get("credits").get("crew");
-//        for (JsonNode crew : crewList) {
-//            movie.addMovieCrew(parseCrew(crew));
-//        }
-
         // 장르 정보 추가
-        JsonNode genreList = responseBody.get("genres");
-        for (JsonNode genre : genreList) {
-            movie.addMovieGenre(parseGenre(genre));
+        JsonNode genres = responseBody.get("genres");
+        for (JsonNode genre : genres) {
+            movieDetail.addMovieGenre(parseGenre(genre));
         }
 
-        return movie;
+        return movieDetail;
     }
-
 
     /**
      * 배우 정보 파싱
      */
     private MovieActor parseActor(JsonNode actor) {
-        MovieActor movieActor = MovieActor.builder()
+        return MovieActor.builder()
                 .tmdbId(actor.get("id").asLong())
-                .name(actor.get("name").asText())
                 .character(actor.get("character").asText())
+                .name(actor.get("name").asText())
                 .profilePath(IMAGE_BASE_URL + actor.get("profile_path").asText())
                 .build();
-        return movieActor;
     }
 
     /**
      * 감독 정보 파싱
      */
     private MovieDirector parseDirector(JsonNode director) {
-        MovieDirector movieDirector = MovieDirector.builder()
-                .tmdbId(director.get("id").asLong())
+        return MovieDirector.builder()
                 .name(director.get("name").asText())
+                .tmdbId(director.get("id").asLong())
                 .profilePath(IMAGE_BASE_URL + director.get("profile_path").asText())
                 .build();
-        return movieDirector;
     }
-
-
-//    // 스탭 정보 파싱
-//    private MovieDirector parseCrew(JsonNode crew) {
-//        MovieDirector movieDirector = MovieDirector.builder()
-//                .tmdbId(crew.get("id").asLong())
-//                .name(crew.get("name").asText())
-//                .character(crew.get("job").asText())
-//                .profilePath(IMAGE_BASE_URL + crew.get("profile_path").asText())
-//                .build();
-//        return movieDirector;
-//    }
-
 
     /**
      * 장르 정보 파싱
      */
     private MovieGenre parseGenre(JsonNode genre) {
-        MovieGenre movieGenre = MovieGenre.builder()
+        return MovieGenre.builder()
                 .genre(Genre.fromId(genre.get("id").asLong()))
                 .build();
-        return movieGenre;
     }
-
 
     /**
      * 영화 리스트 파싱
