@@ -27,4 +27,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
             "GROUP BY m.id " +
             "ORDER BY avgRating DESC")
     Optional<List<Object[]>> findTopRatedMoviesByMbti(@Param("mbti")Mbti mbti);
+
+    Optional<Movie> findByTmdbId(Long tmdbId);
 }

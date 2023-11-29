@@ -19,7 +19,7 @@ public enum Genre {
     TV_MOVIE(10770),
     THRILLER(53),
     WAR(10752),
-    WESTERN(32);
+    WESTERN(37);
 
     private final long id;
 
