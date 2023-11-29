@@ -39,59 +39,53 @@ public class MovieService {
     /**
      * 현재 상영중인 영화 조회
      */
-    public List<MovieListDto> getNowPlayingMovies() {
-        return processMovieListDtos(tmdbApiService.getNowPlayingMovies());
+    public List<MovieDto> getNowPlayingMovies() {
+        return processMovieDtos(tmdbApiService.getNowPlayingMovies());
     }
-
 
     /**
      * 인기 있는 영화 조회
      */
-    public List<MovieListDto> getPopularMovies() {
-        return processMovieListDtos(tmdbApiService.getPopularMovies());
+    public List<MovieDto> getPopularMovies() {
+        return processMovieDtos(tmdbApiService.getPopularMovies());
     }
-
 
     /**
      * 평점 높은 영화 조회
      */
-    public List<MovieListDto> getTopRatedMovies() {
-        return processMovieListDtos(tmdbApiService.getTopRatedMovies());
+    public List<MovieDto> getTopRatedMovies() {
+        return processMovieDtos(tmdbApiService.getTopRatedMovies());
     }
-
 
     /**
      * 개봉 예정인 영화 조회
      */
-    public List<MovieListDto> getUpcomingMovies() {
-        return processMovieListDtos(tmdbApiService.getUpcomingMovies());
+    public List<MovieDto> getUpcomingMovies() {
+        return processMovieDtos(tmdbApiService.getUpcomingMovies());
     }
-
 
     /**
      * 제목으로 영화 검색
      */
-    public Optional<List<MovieListDto>> searchMoviesByTitle(String title) {
-        Optional<List<MovieListDto>> movieListDtos = tmdbApiService.searchMoviesByTitle(title);
-        if (movieListDtos.isEmpty()) return movieListDtos; // 검색 결과 없음
-        else return Optional.of(processMovieListDtos(movieListDtos.get()));
+    public Optional<List<MovieDto>> searchMoviesByTitle(String title) {
+        Optional<List<Movie>> movies = tmdbApiService.searchMoviesByTitle(title);
+        if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
+        else return Optional.of(processMovieDtos(movies.get()));
     }
-
 
     /**
      * 스탭 또는 배우 이름으로 영화 검색
      */
-    public Optional<List<MovieListDto>> searchMoviesByPerson(String name) {
-        Optional<List<MovieListDto>> movieListDtos = tmdbApiService.searchMoviesByPerson(name);
-        if (movieListDtos.isEmpty()) return movieListDtos; // 검색 결과 없음
-        else return Optional.of(processMovieListDtos(movieListDtos.get()));
+    public Optional<List<MovieDto>> searchMoviesByPerson(String name) {
+        Optional<List<Movie>> movies = tmdbApiService.searchMoviesByPerson(name);
+        if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
+        else return Optional.of(processMovieDtos(movies.get()));
     }
-
 
     /**
      * 장르로 영화 조회
      */
-    public Optional<List<MovieListDto>> getMoviesByGenres(List<String> genres) {
+    public Optional<List<MovieDto>> getMoviesByGenres(List<String> genres) {
         // genre를 genreId로 변환
         List<Long> genreIds = new ArrayList<>();
         for (String genre : genres) {
@@ -99,16 +93,15 @@ public class MovieService {
             genreIds.add(genreId);
         }
 
-        Optional<List<MovieListDto>> movieListDtos = tmdbApiService.getMoviesByGenreIds(genreIds);
-        if (movieListDtos.isEmpty()) return movieListDtos; // 검색 결과 없음
-        else return Optional.of(processMovieListDtos(movieListDtos.get()));
+        Optional<List<Movie>> movies = tmdbApiService.getMoviesByGenreIds(genreIds);
+        if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
+        else return Optional.of(processMovieDtos(movies.get()));
     }
-
 
     /**
      * 선호 장르 기반 영화 추천
      */
-    public Optional<List<MovieListDto>> getRecommendedMoviesByPreferredGenre(Long memberId) {
+    public Optional<List<MovieDto>> getRecommendedMoviesByPreferredGenre(Long memberId) {
         // member의 선호 장르 꺼내서
         Optional<List<Genre>> preferredGenres = preferredGenreService.getPreferredGenres(memberId);
 
@@ -129,48 +122,44 @@ public class MovieService {
     /**
      * MBTI 기반 영화 추천
      */
-    public Optional<List<MovieListDto>> getRecommendedMoviesByMbti(Mbti mbti) {
+    public Optional<List<MovieDto>> getRecommendedMoviesByMbti(Mbti mbti) {
         Optional<List<Object[]>> topRatedMoviesByMbti = movieRepository.findTopRatedMoviesByMbti(mbti);
 
         if (topRatedMoviesByMbti.get().isEmpty()) return Optional.empty(); // 추천 데이터 없음
 
-        List<MovieListDto> movieListDtos = new ArrayList<>();
+        List<MovieDto> movieDtos = new ArrayList<>();
         for (Object[] objects : topRatedMoviesByMbti.get()) {
             Movie movie = (Movie)objects[0];
-            movieListDtos.add(convertToMovieListDto(movie));
+            movieDtos.add(convertToMovieDto(movie));
         }
 
-        return Optional.of(movieListDtos);
+        return Optional.of(movieDtos);
     }
-
 
     /**
      * 감독 혹은 배우 필모그래피 조회
      */
-    public Optional<List<MovieListDto>> getFilmographyByPerson(Long personId) {
-        Optional<List<MovieListDto>> movieListDtos = tmdbApiService.getFilmographyByPerson(personId);
-        if (movieListDtos.isEmpty()) return movieListDtos; // 검색 결과 없음
-        else return Optional.of(processMovieListDtos(movieListDtos.get()));
+    public Optional<List<MovieDto>> getFilmographyByPerson(Long personId) {
+        Optional<List<Movie>> movies = tmdbApiService.getFilmographyByPerson(personId);
+        if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
+        else return Optional.of(processMovieDtos(movies.get()));
     }
 
     /**
      * 영화 리스트를 적절히 처리해서 반환
      */
-    public List<MovieListDto> processMovieListDtos(List<MovieListDto> movieListDtos) {
-        for (MovieListDto dto : movieListDtos) {
-            Optional<Long> movieId = movieRepository.findIdByTmdbId(dto.getId()); // TMDB ID로 영화 ID 조회
-            if (movieId.isEmpty()) dto.setId(saveMovieDetails(dto.getId())); // DB에 영화가 없다면 TMDB에서 영화 상세 정보 가져와서 저장
-            else dto.setId(movieId.get());
-        }
-        return movieListDtos;
-    }
+    @Transactional
+    public List<MovieDto> processMovieDtos(List<Movie> movies) {
+        List<MovieDto> movieDtos = new ArrayList<>();
+        for (Movie movie : movies) {
+            // TMDB ID로 영화 조회
+            Optional<Movie> movieOptional = movieRepository.findByTmdbId(movie.getTmdbId());
 
-    /**
-     * TMDB에서 영화 상세 정보 가져와서 저장
-     */
-    public Long saveMovieDetails(Long tmdbId) {
-        Movie movie = tmdbApiService.getMovieById(tmdbId);
-        return movieRepository.save(movie).getId();
+            // DB에 없다면 저장하고 처리
+            if (movieOptional.isEmpty()) movieDtos.add(convertToMovieDto(movieRepository.save(movie)));
+            else movieDtos.add(convertToMovieDto(movieOptional.get()));
+        }
+        return movieDtos;
     }
 
     /**
@@ -178,12 +167,5 @@ public class MovieService {
      */
     public MovieDto convertToMovieDto(Movie movie) {
         return modelMapper.map(movie, MovieDto.class);
-    }
-
-    /**
-     * Movie 엔티티를 MovieListDto로 변환
-     */
-    public MovieListDto convertToMovieListDto(Movie movie) {
-        return modelMapper.map(movie, MovieListDto.class);
     }
 }

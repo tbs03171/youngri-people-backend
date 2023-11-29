@@ -58,11 +58,11 @@ public class MovieController {
 
     @GetMapping("/now-playing")
     public ResponseEntity<CustomResponse> getNowPlayingMovies() {
-        List<MovieListDto> movieListDto = movieService.getNowPlayingMovies();
+        List<MovieDto> movieDtos = movieService.getNowPlayingMovies();
 
         CustomResponse response = CustomResponse.builder()
                 .message("현재 상영중인 영화 목록 조회 성공")
-                .data(movieListDto)
+                .data(movieDtos)
                 .build();
         return ResponseEntity.ok(response);
     }
@@ -70,11 +70,11 @@ public class MovieController {
 
     @GetMapping("/popular")
     public ResponseEntity<CustomResponse> getPopularMovies() {
-        List<MovieListDto> movieListDto = movieService.getPopularMovies();
+        List<MovieDto> movieDtos = movieService.getPopularMovies();
 
         CustomResponse response = CustomResponse.builder()
                 .message("인기 많은 영화 목록 조회 성공")
-                .data(movieListDto)
+                .data(movieDtos)
                 .build();
         return ResponseEntity.ok(response);
     }
@@ -82,11 +82,11 @@ public class MovieController {
 
     @GetMapping("/top-rated")
     public ResponseEntity<CustomResponse> getTopRatedMovies() {
-        List<MovieListDto> movieListDto = movieService.getTopRatedMovies();
+        List<MovieDto> movieDtos = movieService.getTopRatedMovies();
 
         CustomResponse response = CustomResponse.builder()
                 .message("평점 높은 영화 목록 조회 성공")
-                .data(movieListDto)
+                .data(movieDtos)
                 .build();
         return ResponseEntity.ok(response);
     }
@@ -94,11 +94,11 @@ public class MovieController {
 
     @GetMapping("/upcoming")
     public ResponseEntity<CustomResponse> getUpcomingMovies() {
-        List<MovieListDto> movieListDto = movieService.getUpcomingMovies();
+        List<MovieDto> movieDtos = movieService.getUpcomingMovies();
 
         CustomResponse response = CustomResponse.builder()
                 .message("개봉 예정인 영화 목록 조회 성공")
-                .data(movieListDto)
+                .data(movieDtos)
                 .build();
         return ResponseEntity.ok(response);
     }
@@ -109,7 +109,7 @@ public class MovieController {
             @RequestParam(name = "title", required = false) String title,
             @RequestParam(name = "person", required = false) String person
     ) {
-        Optional<List<MovieListDto>> movieListDto;
+        Optional<List<MovieDto>> movieListDto;
         CustomResponse response;
 
         if (title != null) {
@@ -136,7 +136,7 @@ public class MovieController {
 
     @GetMapping("/genres/{genre}")
     public ResponseEntity<CustomResponse> getMoviesByGenre(@PathVariable String genre) {
-        Optional<List<MovieListDto>> movieListDto = movieService.getMoviesByGenres(List.of(new String[]{genre}));
+        Optional<List<MovieDto>> movieListDto = movieService.getMoviesByGenres(List.of(new String[]{genre}));
         CustomResponse response = CustomResponse.builder()
                 .message(genre + "장르로 영화 조회 성공")
                 .data(movieListDto.get())
@@ -148,7 +148,7 @@ public class MovieController {
 
     @GetMapping("/filmography/{personId}")
     public ResponseEntity<CustomResponse> getFilmographyByPerson(@PathVariable Long personId) {
-        Optional<List<MovieListDto>> movieListDto = movieService.getFilmographyByPerson(personId);
+        Optional<List<MovieDto>> movieListDto = movieService.getFilmographyByPerson(personId);
         CustomResponse response = CustomResponse.builder()
                 .message("필모그래피 조회 성공")
                 .data(movieListDto.get())
@@ -157,11 +157,10 @@ public class MovieController {
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping("/recommended-by-genre")
     public ResponseEntity<CustomResponse> getRecommendedMoviesByPreferredGenre(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         Long memberId = principalDetails.getMember().getId();
-        Optional<List<MovieListDto>> movieListDto = movieService.getRecommendedMoviesByPreferredGenre(memberId);
+        Optional<List<MovieDto>> movieListDto = movieService.getRecommendedMoviesByPreferredGenre(memberId);
 
         // 선호 장르 없는 경우
         if (movieListDto.isEmpty()) {
@@ -178,7 +177,6 @@ public class MovieController {
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping("/recommended-by-mbti")
     public ResponseEntity<CustomResponse> getRecommendedMoviesByMbti(@AuthenticationPrincipal PrincipalDetails principalDetails) {
         Mbti mbti = principalDetails.getMember().getMbti();
@@ -191,7 +189,7 @@ public class MovieController {
             return ResponseEntity.ok(response);
         }
 
-        Optional<List<MovieListDto>> movieListDto = movieService.getRecommendedMoviesByMbti(mbti);
+        Optional<List<MovieDto>> movieListDto = movieService.getRecommendedMoviesByMbti(mbti);
 
         // 추천 데이터가 없는 경우
         if (movieListDto.isEmpty()) {
@@ -208,8 +206,7 @@ public class MovieController {
         return ResponseEntity.ok(response);
     }
 
-
-    private CustomResponse createSearchResponse(String keyword, Optional<List<MovieListDto>> movieListDto) {
+    private CustomResponse createSearchResponse(String keyword, Optional<List<MovieDto>> movieListDto) {
         if (movieListDto.isEmpty()) {
             return CustomResponse.builder()
                     .message("검색 결과 없음: " + keyword)

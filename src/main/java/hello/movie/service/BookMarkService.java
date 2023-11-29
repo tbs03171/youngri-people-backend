@@ -1,6 +1,6 @@
 package hello.movie.service;
 
-import hello.movie.dto.MovieListDto;
+import hello.movie.dto.MovieDto;
 import hello.movie.model.BookMark;
 import hello.movie.model.Member;
 import hello.movie.model.Movie;
@@ -47,13 +47,13 @@ public class BookMarkService {
     }
 
     //내 북마크의 모든 영화 조회
-    public List<MovieListDto> getBookMarksList(Long memberId) {
+    public List<MovieDto> getBookMarksList(Long memberId) {
         List<BookMark> bookMarkList = bookMarkRepository.findAllByMemberId(memberId);
 
-        List<MovieListDto> movieListDto = new ArrayList<>();
+        List<MovieDto> movieDtos = new ArrayList<>();
         for ( BookMark bookMark : bookMarkList) {
-            movieListDto.add(movieService.convertToMovieListDto(bookMark.getMovie()));
+            movieDtos.add(movieService.convertToMovieDto(bookMark.getMovie()));
         }
-        return movieListDto;
+        return movieDtos;
     }
 }

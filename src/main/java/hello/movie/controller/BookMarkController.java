@@ -2,7 +2,7 @@ package hello.movie.controller;
 
 import hello.movie.CustomResponse;
 import hello.movie.auth.PrincipalDetails;
-import hello.movie.dto.MovieListDto;
+import hello.movie.dto.MovieDto;
 import hello.movie.service.BookMarkService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -66,7 +66,7 @@ public class BookMarkController {
     public ResponseEntity<CustomResponse> getAllBookMarks(@AuthenticationPrincipal PrincipalDetails principalDetails){
         Long memberId = principalDetails.getMember().getId();
 
-        List<MovieListDto> bookMarkList = bookMarkService.getBookMarksList(memberId);
+        List<MovieDto> bookMarkList = bookMarkService.getBookMarksList(memberId);
 
         CustomResponse response = CustomResponse.builder()
                 .message("memberId로 찜한 모든 북마크 조회 성공")
