@@ -334,6 +334,7 @@ public class TMDBApiService {
         List<Movie> movies = new ArrayList<>();
         for (JsonNode result : results) {
             if (!result.has("media_type") || result.get("media_type").asText().equals("movie")) {
+                if (result.get("vote_count").asLong() < 10) continue; // 인지도 없는 영화 제외
                 Movie movie = Movie.builder()
                         .tmdbId(result.get("id").asLong())
                         .title(result.get("title").asText())
