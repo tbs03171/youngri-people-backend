@@ -9,10 +9,7 @@ import hello.movie.repository.MemberRepository;
 import hello.movie.repository.ReviewRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -61,4 +58,21 @@ public class LikeService {
         likeRepository.delete(reviewLike);
     }
 
+    @Transactional
+    public boolean isLike(LikeRequestDTO likeRequestDTO)throws Exception {
+        Member member = memberRepository.findById(likeRequestDTO.getMemberId())
+                .orElseThrow(NullPointerException::new);
+
+
+        Review review  = reviewRepository.findById(likeRequestDTO.getReviewId())
+                .orElseThrow(NullPointerException::new);
+        return likeRepository.existsByMemberAndReview(member,review);
+    }
+
+    public LikeRequestDTO createLikeRequestDto(Long memberid,Long reviewid){
+        return LikeRequestDTO.builder()
+                .memberId(memberid)
+                .reviewId(reviewid)
+                .build();
+    }
 }
