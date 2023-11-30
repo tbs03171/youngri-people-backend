@@ -44,8 +44,8 @@ public class MemberService {
     }
 
     //회원 전쳬 조회
-    public List<Member> findMembers() {
-        return memberRepository.findAll();
+    public List<Member> findMembers(Long memberId) {
+        return memberRepository.findByIdNot(memberId);
     }
 
     //회원 id로 조회
@@ -54,13 +54,13 @@ public class MemberService {
     }
 
     //회원 nickname으로 조회
-    public List<Member> findByNickname(String nickname) {
-        return memberRepository.findAllByNickname(nickname);
+    public List<Member> findByNickname(String nickname, Long memberId) {
+        return memberRepository.findByNicknameAndIdNot(nickname, memberId);
     }
 
     //회원 email로 조회
-    public Optional<Member> findByUserId(String userId) {
-        return memberRepository.findByUserId(userId);
+    public Optional<Member> findByUserId(String userId, Long memberId) {
+        return memberRepository.findByUserIdAndIdNot(userId, memberId);
     }
 
     public Member CreateMemberDtoToMember(CreateMemberDto memberDto) {

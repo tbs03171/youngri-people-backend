@@ -66,8 +66,10 @@ public class MemberController {
     //커뮤니티 화면에서 사용자 전체 보기
     @ApiResponse(responseCode = "200", description = "모든 멤버 정보 조회 성공")
     @GetMapping("/search")
-    public ResponseEntity<CustomResponse> getAllMembers(){
-        List<Member> members = memberService.findMembers();
+    public ResponseEntity<CustomResponse> getAllMembers(@AuthenticationPrincipal PrincipalDetails principalDetails){
+        Long memberId = principalDetails.getMember().getId();
+
+        List<Member> members = memberService.findMembers(memberId);
 
         List<SearchMemberResponseDto> searchMemberResponseDtoList = new ArrayList<>();
         for (Member member : members) {
@@ -87,8 +89,10 @@ public class MemberController {
             @ApiResponse(responseCode = "200", description = "닉네임으로 사용자 조회 성공"),
             @ApiResponse(responseCode = "400", description = "일치하는 닉네임이 없어 실패")})
     @GetMapping("/search/nickname")
-    public ResponseEntity<CustomResponse> getMemberByNickname(@RequestParam("nickname") String nickname){
-        List<Member> findMembers = memberService.findByNickname(nickname);
+    public ResponseEntity<CustomResponse> getMemberByNickname(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam("nickname") String nickname){
+        Long memberId = principalDetails.getMember().getId();
+
+        List<Member> findMembers = memberService.findByNickname(nickname, memberId);
 
         if(findMembers.isEmpty()){
             CustomResponse response = CustomResponse.builder()
@@ -116,8 +120,10 @@ public class MemberController {
             @ApiResponse(responseCode = "200", description = "아이디로 사용자 정보 조회 성공"),
             @ApiResponse(responseCode = "400", description = "일치하는 사용자 아이디 없어 실패")})
     @GetMapping("/search/userId")
-    public ResponseEntity<CustomResponse> getMemberByUserId(@RequestParam("userId") String userId){
-        Optional<Member> findMember = memberService.findByUserId(userId);
+    public ResponseEntity<CustomResponse> getMemberByUserId(@AuthenticationPrincipal PrincipalDetails principalDetails, @RequestParam("userId") String userId){
+        Long memberId = principalDetails.getMember().getId();
+
+        Optional<Member> findMember = memberService.findByUserId(userId, memberId);
 
         if(findMember.isEmpty()){
             CustomResponse response = CustomResponse.builder()
