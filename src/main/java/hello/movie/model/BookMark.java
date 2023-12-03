@@ -22,13 +22,11 @@ public class BookMark {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MOVIE_ID")
     private Movie movie;
-    private Boolean bookmarkStatus;
 
     public static BookMark createBookMark(Member member, Movie movie) {
         BookMark bookMark = new BookMark();
         bookMark.member = member;
         bookMark.movie = movie;
-        bookMark.bookmarkStatus = true;
         return bookMark;
     }
 }
