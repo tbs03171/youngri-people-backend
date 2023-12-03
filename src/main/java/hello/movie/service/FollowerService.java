@@ -5,6 +5,7 @@ import hello.movie.dto.FollowResponseDto;
 import hello.movie.model.Follow;
 import hello.movie.model.Member;
 import hello.movie.repository.FollowerRepository;
+import hello.movie.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +20,12 @@ import java.util.Optional;
 public class FollowerService {
 
     private final FollowerRepository followerRepository;
-    private final MemberService memberService;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public void follow(Long followerId, Long followingId){
-        Optional<Member> follower = memberService.findById(followerId);
-        Optional<Member> following = memberService.findById(followingId);
+        Optional<Member> follower = memberRepository.findById(followerId);
+        Optional<Member> following = memberRepository.findById(followingId);
 
         Follow follow = Follow.createFollow(follower.get(), following.get());
         followerRepository.save(follow);
