@@ -5,6 +5,8 @@ import lombok.*;
 
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class UpdateMemberDto {
 
     private String profilePath;
