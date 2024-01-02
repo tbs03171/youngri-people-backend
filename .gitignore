@@ -38,3 +38,6 @@ out/
 
 ### Api Key ###
 src/main/resources/application-API-KEY.properties
+
+### application.yml ###
+src/main/resources/application.yml
