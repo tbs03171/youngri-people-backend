@@ -19,7 +19,7 @@ public class MovieDirector {
     private Long tmdbId;
 
     @OneToOne(mappedBy = "director", fetch = FetchType.LAZY)
-    private Movie movie;
+    private MovieDetail movieDetail;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    @JoinColumn(name = "CREW_ID")
@@ -30,7 +30,8 @@ public class MovieDirector {
 //    private String character;
 
     private String profilePath;
-    public void setMovie(Movie movie) {
-        this.movie = movie;
+
+    public void setMovieDetail(MovieDetail movieDetail) {
+        this.movieDetail = movieDetail;
     }
 }

@@ -1,14 +1,11 @@
 package hello.movie.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import hello.movie.dto.MovieListDto;
 import hello.movie.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -35,37 +32,30 @@ public class TMDBApiService {
     /**
      * 영화 상세 정보 조회
      */
-    public Optional<Movie> getMovieById(Long movieId) throws JsonProcessingException {
+    public MovieDetail getMovieDetailById(Long movieId) {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/movie/{movieId}")
                 .queryParam("api_key", KEY)
                 .queryParam("language", "ko-KR")
                 .queryParam("append_to_response", "credits");
-//        builder.buildAndExpand(movieId);
         builder.uriVariables(Collections.singletonMap("movieId", movieId));
 
         // HTTP GET 요청
-        try {
-            ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
+        ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
 
-            // JSON 응답 파싱
-            JsonNode responseBody = response.getBody();
+        // JSON 응답 파싱
+        JsonNode responseBody = response.getBody();
 
-            // 영화 정보 생성
-            Movie movie = parseMovieInfo(responseBody);
-
-            return Optional.of(movie);
-        } catch (HttpClientErrorException e) { // 유효하지 않은 Movie ID
-            return Optional.empty();
-        }
+        // 영화 정보 생성해서 반환
+        return parseMovieDetail(responseBody);
     }
 
 
     /**
      * 현재 상영중인 영화 조회
      */
-    public List<MovieListDto> getNowPlayingMovies() {
+    public List<Movie> getNowPlayingMovies() {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/movie/now_playing")
@@ -78,14 +68,14 @@ public class TMDBApiService {
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
 
         // 영화 리스트 파싱해서 반환
-        return parseMovieList(response.getBody().get("results"));
+        return parseMovies(response.getBody().get("results"));
     }
 
 
     /**
      * 인기 있는 영화 조회
      */
-    public List<MovieListDto> getPopularMovies() {
+    public List<Movie> getPopularMovies() {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/movie/popular")
@@ -98,14 +88,14 @@ public class TMDBApiService {
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
 
         // 영화 리스트 파싱해서 반환
-        return parseMovieList(response.getBody().get("results"));
+        return parseMovies(response.getBody().get("results"));
     }
 
 
     /**
      * 평점 높은 영화 조회
      */
-    public List<MovieListDto> getTopRatedMovies() {
+    public List<Movie> getTopRatedMovies() {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/movie/top_rated")
@@ -118,14 +108,14 @@ public class TMDBApiService {
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
 
         // 영화 리스트 파싱해서 반환
-        return parseMovieList(response.getBody().get("results"));
+        return parseMovies(response.getBody().get("results"));
     }
 
 
     /**
      * 개봉 예정인 영화 조회
      */
-    public List<MovieListDto> getUpcomingMovies() {
+    public List<Movie> getUpcomingMovies() {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/movie/upcoming")
@@ -138,14 +128,14 @@ public class TMDBApiService {
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.toUriString(), JsonNode.class);
 
         // 영화 리스트 파싱해서 반환
-        return parseMovieList(response.getBody().get("results"));
+        return parseMovies(response.getBody().get("results"));
     }
 
 
     /**
      * 제목으로 영화 검색
      */
-    public Optional<List<MovieListDto>> searchMoviesByTitle(String title) {
+    public Optional<List<Movie>> searchMoviesByTitle(String title) {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/search/movie")
@@ -155,21 +145,20 @@ public class TMDBApiService {
                 .queryParam("query", title);
 
         // HTTP GET 요청
-//        System.out.println(builder.build().toUriString());
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.build().toUriString(), JsonNode.class); // 인코딩 두 번 되는 거 조심 !!
 
         // 검색 결과가 없는 경우
         if (response.getBody().get("total_results").asLong() == 0) return Optional.empty();
 
         // 영화 리스트 파싱해서 반환
-        return Optional.of(parseMovieList(response.getBody().get("results")));
+        return Optional.of(parseMovies(response.getBody().get("results")));
     }
 
 
     /**
      * 스탭 또는 배우 이름으로 영화 검색
      */
-    public Optional<List<MovieListDto>> searchMoviesByPerson(String name) {
+    public Optional<List<Movie>> searchMoviesByPerson(String name) {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/search/person")
@@ -179,21 +168,20 @@ public class TMDBApiService {
                 .queryParam("query", name);
 
         // HTTP GET 요청
-//        System.out.println(builder.build().toUriString());
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(builder.build().toUriString(), JsonNode.class);
 
         // 검색 결과가 없는 경우
         if (response.getBody().get("total_results").asLong() == 0) return Optional.empty();
 
         // 영화 리스트 파싱해서 반환
-        return Optional.of(parseMovieList(response.getBody().get("results").get(0).get("known_for")));
+        return Optional.of(parseMovies(response.getBody().get("results").get(0).get("known_for")));
     }
 
 
     /**
      * 장르 ID로 영화 조회
      */
-    public Optional<List<MovieListDto>> getMoviesByGenreIds(List<Long> genreIds) {
+    public Optional<List<Movie>> getMoviesByGenreIds(List<Long> genreIds) {
         // genreId를 |로 연결
         String joinedGenreIds = genreIds.stream()
                 .map(String::valueOf)
@@ -217,13 +205,13 @@ public class TMDBApiService {
         if (response.getBody().get("total_results").asLong() == 0) return Optional.empty();
 
         // 영화 리스트 파싱해서 반환
-        return Optional.of(parseMovieList(response.getBody().get("results")));
+        return Optional.of(parseMovies(response.getBody().get("results")));
     }
 
     /**
      * 감독 혹은 배우 필모그래피 조회
      */
-    public Optional<List<MovieListDto>> getFilmographyByPerson(Long personId) {
+    public Optional<List<Movie>> getFilmographyByPerson(Long personId) {
         // 요청 URL 생성
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
                 .path("/discover/movie")
@@ -242,7 +230,7 @@ public class TMDBApiService {
         if (response.getBody().get("total_results").asLong() == 0) return Optional.empty();
 
         // 영화 리스트 파싱해서 반환
-        return Optional.of(parseMovieList(response.getBody().get("results")));
+        return Optional.of(parseMovies(response.getBody().get("results")));
     }
 
     /**
@@ -266,116 +254,95 @@ public class TMDBApiService {
                 return VIDEO_BASE_URL + result.get("key").asText();
             }
         }
-        return null;
+        return null; // 예고편 없는 경우
     }
 
 
     /**
      * 영화 상세 정보 파싱
      */
-    private Movie parseMovieInfo(JsonNode responseBody) {
-        Movie movie = Movie.builder()
-                .tmdbId(responseBody.get("id").asLong())
-                .overview(responseBody.get("overview").asText())
-                .posterPath(IMAGE_BASE_URL + responseBody.get("poster_path").asText())
+    private MovieDetail parseMovieDetail(JsonNode responseBody) {
+        MovieDetail movieDetail = MovieDetail.builder()
                 .rating(responseBody.get("vote_average").asDouble())
-                .releaseDate(LocalDate.parse(responseBody.get("release_date").asText(), DateTimeFormatter.ISO_DATE))
-                .title(responseBody.get("title").asText())
+                .overview(responseBody.get("overview").asText())
                 .trailerPath(getTrailerById(responseBody.get("id").asLong()))
+                .releaseDate(LocalDate.parse(responseBody.get("release_date").asText(), DateTimeFormatter.ISO_DATE))
                 .build();
 
-        // 배우 정보 추가
-        JsonNode actorList = responseBody.get("credits").get("cast");
-        for (JsonNode actor : actorList) {
-            movie.addMovieActor(parseActor(actor));
+        // 배우 정보 추가 (5명만 가져오도록)
+        JsonNode actors = responseBody.get("credits").get("cast");
+        int cnt = 0;
+        for (JsonNode actor : actors) {
+            movieDetail.addMovieActor(parseActor(actor));
+            cnt++;
+            if (cnt > 4) break;
         }
 
         // 감독 정보 추가
         JsonNode crewList = responseBody.get("credits").get("crew");
         for (JsonNode crew : crewList) {
             if (crew.get("job").asText().equals("Director")) {
-                movie.setDirector(parseDirector(crew));
+                movieDetail.setDirector(parseDirector(crew));
             }
         }
 
-
-//        // 스탭 정보 추가
-//        JsonNode crewList = responseBody.get("credits").get("crew");
-//        for (JsonNode crew : crewList) {
-//            movie.addMovieCrew(parseCrew(crew));
-//        }
-
         // 장르 정보 추가
-        JsonNode genreList = responseBody.get("genres");
-        for (JsonNode genre : genreList) {
-            movie.addMovieGenre(parseGenre(genre));
+        JsonNode genres = responseBody.get("genres");
+        for (JsonNode genre : genres) {
+            movieDetail.addMovieGenre(parseGenre(genre));
         }
 
-        return movie;
+        return movieDetail;
     }
-
 
     /**
      * 배우 정보 파싱
      */
     private MovieActor parseActor(JsonNode actor) {
-        MovieActor movieActor = MovieActor.builder()
+        return MovieActor.builder()
                 .tmdbId(actor.get("id").asLong())
-                .name(actor.get("name").asText())
                 .character(actor.get("character").asText())
+                .name(actor.get("name").asText())
                 .profilePath(IMAGE_BASE_URL + actor.get("profile_path").asText())
                 .build();
-        return movieActor;
     }
 
     /**
      * 감독 정보 파싱
      */
     private MovieDirector parseDirector(JsonNode director) {
-        MovieDirector movieDirector = MovieDirector.builder()
-                .tmdbId(director.get("id").asLong())
+        return MovieDirector.builder()
                 .name(director.get("name").asText())
+                .tmdbId(director.get("id").asLong())
                 .profilePath(IMAGE_BASE_URL + director.get("profile_path").asText())
                 .build();
-        return movieDirector;
     }
-
-
-//    // 스탭 정보 파싱
-//    private MovieDirector parseCrew(JsonNode crew) {
-//        MovieDirector movieDirector = MovieDirector.builder()
-//                .tmdbId(crew.get("id").asLong())
-//                .name(crew.get("name").asText())
-//                .character(crew.get("job").asText())
-//                .profilePath(IMAGE_BASE_URL + crew.get("profile_path").asText())
-//                .build();
-//        return movieDirector;
-//    }
-
 
     /**
      * 장르 정보 파싱
      */
     private MovieGenre parseGenre(JsonNode genre) {
-        MovieGenre movieGenre = MovieGenre.builder()
+        return MovieGenre.builder()
                 .genre(Genre.fromId(genre.get("id").asLong()))
                 .build();
-        return movieGenre;
     }
-
 
     /**
      * 영화 리스트 파싱
      */
-    private List<MovieListDto> parseMovieList(JsonNode movies) {
-        List<MovieListDto> movieList = new ArrayList<>();
-        for (JsonNode movie : movies) {
-            MovieListDto movieListDTO = new MovieListDto();
-            movieListDTO.setId(movie.get("id").asLong());
-            movieListDTO.setTitle(movie.get("title").asText());
-            movieListDTO.setPosterPath(IMAGE_BASE_URL + movie.get("poster_path").asText());
-            movieList.add(movieListDTO);
+    private List<Movie> parseMovies(JsonNode results) {
+        List<Movie> movies = new ArrayList<>();
+        for (JsonNode result : results) {
+            if (!result.has("media_type") || result.get("media_type").asText().equals("movie")) {
+                if (result.get("vote_count").asLong() < 10) continue; // 인지도 없는 영화 제외
+                Movie movie = Movie.builder()
+                        .tmdbId(result.get("id").asLong())
+                        .title(result.get("title").asText())
+                        .posterPath(IMAGE_BASE_URL + result.get("poster_path").asText())
+                        .build();
+                movies.add(movie);
+            }
         }
-        return movieList;
+        return movies;
     }
 }
