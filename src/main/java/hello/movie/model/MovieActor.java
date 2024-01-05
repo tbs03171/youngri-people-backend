@@ -25,7 +25,7 @@ public class MovieActor {
 
     private String name;
 
-    private String character;
+    private String role;
 
     private String profilePath;
 
