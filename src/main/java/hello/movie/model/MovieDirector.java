@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class MovieDirector {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "movie_director_id")
     private Long id;
 
     private Long tmdbId;

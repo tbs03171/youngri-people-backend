@@ -18,15 +18,15 @@ import java.util.List;
 public class MovieDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "MOVIE_DETAIL_ID")
+    @Column(name = "movie_detail_id")
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "MOVIE_ID")
+    @JoinColumn(name = "movie_id")
     private Movie movie;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "DIRECTOR_ID")
+    @JoinColumn(name = "director_id")
     private MovieDirector director;
 
     @OneToMany(mappedBy = "movieDetail", cascade = CascadeType.ALL)

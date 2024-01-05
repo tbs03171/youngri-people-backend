@@ -14,15 +14,15 @@ public class Follow {
 
     @Id
     @GeneratedValue
-    @Column(name = "FOLLOW_ID")
+    @Column(name = "follow_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FOLLOWER")
+    @JoinColumn(name = "follower")
     private Member follower;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "FOLLOWEE")
+    @JoinColumn(name = "followee")
     private Member followee;
 
     @Temporal(TemporalType.DATE)
