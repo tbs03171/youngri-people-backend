@@ -301,7 +301,7 @@ public class TMDBApiService {
     private MovieActor parseActor(JsonNode actor) {
         return MovieActor.builder()
                 .tmdbId(actor.get("id").asLong())
-                .character(actor.get("character").asText())
+                .role(actor.get("character").asText())
                 .name(actor.get("name").asText())
                 .profilePath(IMAGE_BASE_URL + actor.get("profile_path").asText())
                 .build();

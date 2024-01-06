@@ -14,18 +14,18 @@ import lombok.NoArgsConstructor;
 public class MovieActor {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "MOVIE_ACTOR_ID")
+    @Column(name = "movie_actor_id")
     private Long id;
 
     private Long tmdbId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MOVIE_DETAIL_ID")
+    @JoinColumn(name = "movie_detail_id")
     private MovieDetail movieDetail;
 
     private String name;
 
-    private String character;
+    private String role;
 
     private String profilePath;
 

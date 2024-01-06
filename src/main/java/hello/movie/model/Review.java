@@ -23,7 +23,7 @@ import java.util.List;
 public class Review {
 
     @Id @GeneratedValue
-    @Column(name = "REVIEW_ID")
+    @Column(name = "review_id")
     private Long id;
     private String comment;
     private int reviewRating;
