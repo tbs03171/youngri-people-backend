@@ -5,27 +5,27 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "BOOKMARK")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BookMark {
+@Entity
+public class Bookmark {
 
     @Id
     @GeneratedValue
-    @Column(name = "BOOKMARK_ID")
+    @Column(name = "bookmark_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MEMBER_ID")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "MOVIE_ID")
+    @JoinColumn(name = "movie_id")
     private Movie movie;
     private Boolean bookmarkStatus;
 
-    public static BookMark createBookMark(Member member, Movie movie) {
-        BookMark bookMark = new BookMark();
+    public static Bookmark createBookMark(Member member, Movie movie) {
+        Bookmark bookMark = new Bookmark();
         bookMark.member = member;
         bookMark.movie = movie;
         bookMark.bookmarkStatus = true;
