@@ -203,4 +203,16 @@ public class MovieService {
     public MovieDto convertToMovieDto(Movie movie) {
         return modelMapper.map(movie, MovieDto.class);
     }
+
+    /**
+     * 영화 랭킹 업데이트
+     */
+    @Scheduled(cron = "0 0 0 * * MON")
+    @CacheEvict(value = {"nowPlayingMovies", "popularMovies", "topRatedMovies", "upcomingMovies", "moviesByGenres"}, allEntries = true, cacheManager = "contentCacheManager")
+    public void updateMovieRanking() {
+        getNowPlayingMovies();
+        getPopularMovies();
+        getUpcomingMovies();
+        getTopRatedMovies();
+    }
 }
