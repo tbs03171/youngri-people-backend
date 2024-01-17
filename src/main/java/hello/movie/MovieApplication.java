@@ -1,15 +1,14 @@
 package hello.movie;
 
-import hello.movie.model.Gender;
-import hello.movie.model.Member;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Date;
 @EnableJpaAuditing
+@EnableCaching
 @SpringBootApplication
 public class MovieApplication {
 
