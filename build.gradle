@@ -35,6 +35,9 @@ dependencies {
 	implementation group: 'com.mysql', name: 'mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 	// mockk
 	testImplementation("io.mockk:mockk:1.12.5")
   
