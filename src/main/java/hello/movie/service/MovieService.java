@@ -54,6 +54,7 @@ public class MovieService {
     /**
      * 현재 상영중인 영화 조회
      */
+    @Cacheable(value = "nowPlayingMovies", cacheManager = "contentCacheManager")
     public List<MovieDto> getNowPlayingMovies() {
         return convertToMovieDtos(saveMovies(tmdbApiService.getNowPlayingMovies()));
     }
@@ -61,6 +62,7 @@ public class MovieService {
     /**
      * 인기 있는 영화 조회
      */
+    @Cacheable(value = "popularMovies", cacheManager = "contentCacheManager")
     public List<MovieDto> getPopularMovies() {
         return convertToMovieDtos(saveMovies(tmdbApiService.getPopularMovies()));
     }
@@ -68,6 +70,7 @@ public class MovieService {
     /**
      * 평점 높은 영화 조회
      */
+    @Cacheable(value = "topRatedMovies", cacheManager = "contentCacheManager")
     public List<MovieDto> getTopRatedMovies() {
         return convertToMovieDtos(saveMovies(tmdbApiService.getTopRatedMovies()));
     }
@@ -75,6 +78,7 @@ public class MovieService {
     /**
      * 개봉 예정인 영화 조회
      */
+    @Cacheable(value = "upcomingMovies", cacheManager = "contentCacheManager")
     public List<MovieDto> getUpcomingMovies() {
         return convertToMovieDtos(saveMovies(tmdbApiService.getUpcomingMovies()));
     }
@@ -100,6 +104,7 @@ public class MovieService {
     /**
      * 장르로 영화 조회
      */
+    @Cacheable(value = "moviesByGenres", key = "#genres", cacheManager = "contentCacheManager")
     public Optional<List<MovieDto>> getMoviesByGenres(List<String> genres) {
         // genre를 genreId로 변환
         List<Long> genreIds = new ArrayList<>();
