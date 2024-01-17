@@ -55,28 +55,28 @@ public class MovieService {
      * 현재 상영중인 영화 조회
      */
     public List<MovieDto> getNowPlayingMovies() {
-        return processMovieDtos(tmdbApiService.getNowPlayingMovies());
+        return convertToMovieDtos(saveMovies(tmdbApiService.getNowPlayingMovies()));
     }
 
     /**
      * 인기 있는 영화 조회
      */
     public List<MovieDto> getPopularMovies() {
-        return processMovieDtos(tmdbApiService.getPopularMovies());
+        return convertToMovieDtos(saveMovies(tmdbApiService.getPopularMovies()));
     }
 
     /**
      * 평점 높은 영화 조회
      */
     public List<MovieDto> getTopRatedMovies() {
-        return processMovieDtos(tmdbApiService.getTopRatedMovies());
+        return convertToMovieDtos(saveMovies(tmdbApiService.getTopRatedMovies()));
     }
 
     /**
      * 개봉 예정인 영화 조회
      */
     public List<MovieDto> getUpcomingMovies() {
-        return processMovieDtos(tmdbApiService.getUpcomingMovies());
+        return convertToMovieDtos(saveMovies(tmdbApiService.getUpcomingMovies()));
     }
 
     /**
@@ -85,7 +85,7 @@ public class MovieService {
     public Optional<List<MovieDto>> searchMoviesByTitle(String title) {
         Optional<List<Movie>> movies = tmdbApiService.searchMoviesByTitle(title);
         if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
-        else return Optional.of(processMovieDtos(movies.get()));
+        else return Optional.of(convertToMovieDtos(saveMovies(movies.get())));
     }
 
     /**
@@ -94,7 +94,7 @@ public class MovieService {
     public Optional<List<MovieDto>> searchMoviesByPerson(String name) {
         Optional<List<Movie>> movies = tmdbApiService.searchMoviesByPerson(name);
         if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
-        else return Optional.of(processMovieDtos(movies.get()));
+        else return Optional.of(convertToMovieDtos(saveMovies(movies.get())));
     }
 
     /**
@@ -110,7 +110,7 @@ public class MovieService {
 
         Optional<List<Movie>> movies = tmdbApiService.getMoviesByGenreIds(genreIds);
         if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
-        else return Optional.of(processMovieDtos(movies.get()));
+        else return Optional.of(convertToMovieDtos(saveMovies(movies.get())));
     }
 
     /**
@@ -156,22 +156,38 @@ public class MovieService {
     public Optional<List<MovieDto>> getFilmographyByPerson(Long personId) {
         Optional<List<Movie>> movies = tmdbApiService.getFilmographyByPerson(personId);
         if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
-        else return Optional.of(processMovieDtos(movies.get()));
+        else return Optional.of(convertToMovieDtos(saveMovies(movies.get())));
     }
 
     /**
-     * 영화 리스트를 적절히 처리해서 반환
+     * 영화 저장
      */
     @Transactional
-    public List<MovieDto> processMovieDtos(List<Movie> movies) {
+    public Movie saveMovie(Movie movie) {
+        return movieRepository.save(movie);
+    }
+
+    /**
+     * 영화 리스트 저장
+     */
+    public List<Movie> saveMovies(List<Movie> movies) {
+        for (Movie movie : movies) {
+            Optional<Movie> movieOptional = movieRepository.findByTmdbId(movie.getTmdbId());
+            if (movieOptional.isEmpty())
+                movie = saveMovie(movie);
+            else
+                movie = movieOptional.get();
+        }
+        return movies;
+    }
+
+    /**
+     * List<Movie>를 List<MovieDto>로 변환
+     */
+    public List<MovieDto> convertToMovieDtos(List<Movie> movies) {
         List<MovieDto> movieDtos = new ArrayList<>();
         for (Movie movie : movies) {
-            // TMDB ID로 영화 조회
-            Optional<Movie> movieOptional = movieRepository.findByTmdbId(movie.getTmdbId());
-
-            // DB에 없다면 저장하고 처리
-            if (movieOptional.isEmpty()) movieDtos.add(convertToMovieDto(movieRepository.save(movie)));
-            else movieDtos.add(convertToMovieDto(movieOptional.get()));
+            movieDtos.add(convertToMovieDto(movie));
         }
         return movieDtos;
     }
