@@ -180,14 +180,15 @@ public class MovieService {
      */
     @Transactional
     public List<Movie> saveMovies(List<Movie> movies) {
+        List<Movie> newMovies = new ArrayList<>();
         for (Movie movie : movies) {
             Optional<Movie> movieOptional = movieRepository.findByTmdbId(movie.getTmdbId());
             if (movieOptional.isEmpty())
-                movie = saveMovie(movie);
+                newMovies.add(saveMovie(movie));
             else
-                movie = movieOptional.get();
+                newMovies.add(movieOptional.get());
         }
-        return movies;
+        return newMovies;
     }
 
     /**
