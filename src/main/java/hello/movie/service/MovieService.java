@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class MovieService {
 
     private final MovieRepository movieRepository;
@@ -178,6 +178,7 @@ public class MovieService {
     /**
      * 영화 리스트 저장
      */
+    @Transactional
     public List<Movie> saveMovies(List<Movie> movies) {
         for (Movie movie : movies) {
             Optional<Movie> movieOptional = movieRepository.findByTmdbId(movie.getTmdbId());
