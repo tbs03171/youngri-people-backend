@@ -2,6 +2,9 @@ package hello.movie.service;
 
 import hello.movie.dto.MovieDetailDto;
 import hello.movie.dto.MovieDto;
+import hello.movie.dto.TmdbDto.TmdbMovieDetailDto;
+import hello.movie.dto.TmdbDto.TmdbMovieDto;
+import hello.movie.dto.TmdbDto.TmdbPersonDto;
 import hello.movie.model.*;
 import hello.movie.repository.MovieDetailRepository;
 import hello.movie.repository.MovieRepository;
@@ -31,7 +34,6 @@ public class MovieService {
     /**
      * 영화 상세 정보 조회
      */
-    @Transactional
     public Optional<MovieDetailDto> getMovieDetailByMovieId(Long movieId) {
         Optional<Movie> movie = movieRepository.findById(movieId);
 
@@ -42,7 +44,7 @@ public class MovieService {
         Optional<MovieDetail> movieDetail = movieDetailRepository.findByMovieId(movieId);
         MovieDetailDto movieDetailDto;
         if (movieDetail.isEmpty()) { // 영화 상세 정보가 없다면 TMDB에서 가져와서 저장
-            MovieDetail saved = movieDetailRepository.save(tmdbApiService.getMovieDetailById(movie.get().getTmdbId()));
+            MovieDetail saved = saveMovieDetail(tmdbApiService.getMovieDetailById(movie.get().getTmdbId()));
             movieDetailDto = modelMapper.map(saved, MovieDetailDto.class);
         }
         else movieDetailDto = modelMapper.map(movieDetail.get(), MovieDetailDto.class);
@@ -90,7 +92,7 @@ public class MovieService {
      * 제목으로 영화 검색
      */
     public Optional<List<MovieDto>> searchMoviesByTitle(String title) {
-        Optional<List<Movie>> movies = tmdbApiService.searchMoviesByTitle(title);
+        Optional<List<TmdbMovieDto>> movies = tmdbApiService.searchMoviesByTitle(title);
         if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
         else return Optional.of(convertToMovieDtos(saveMovies(movies.get())));
     }
@@ -99,7 +101,7 @@ public class MovieService {
      * 스탭 또는 배우 이름으로 영화 검색
      */
     public Optional<List<MovieDto>> searchMoviesByPerson(String name) {
-        Optional<List<Movie>> movies = tmdbApiService.searchMoviesByPerson(name);
+        Optional<List<TmdbMovieDto>> movies = tmdbApiService.searchMoviesByPerson(name);
         if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
         else return Optional.of(convertToMovieDtos(saveMovies(movies.get())));
     }
@@ -116,7 +118,7 @@ public class MovieService {
             genreIds.add(genreId);
         }
 
-        Optional<List<Movie>> movies = tmdbApiService.getMoviesByGenreIds(genreIds);
+        Optional<List<TmdbMovieDto>> movies = tmdbApiService.getMoviesByGenreIds(genreIds);
         if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
         else return Optional.of(convertToMovieDtos(saveMovies(movies.get())));
     }
@@ -162,33 +164,77 @@ public class MovieService {
      * 감독 혹은 배우 필모그래피 조회
      */
     public Optional<List<MovieDto>> getFilmographyByPerson(Long personId) {
-        Optional<List<Movie>> movies = tmdbApiService.getFilmographyByPerson(personId);
+        Optional<List<TmdbMovieDto>> movies = tmdbApiService.getFilmographyByPerson(personId);
         if (movies.isEmpty()) return Optional.empty(); // 검색 결과 없음
         else return Optional.of(convertToMovieDtos(saveMovies(movies.get())));
+    }
+
+    /**
+     * 영화 세부 정보 저장
+     */
+    @Transactional
+    public MovieDetail saveMovieDetail(TmdbMovieDetailDto tmdbMovieDetailDto) {
+        // MovieDetail 생성
+        MovieDetail movieDetail = MovieDetail.builder()
+                .rating(tmdbMovieDetailDto.getRating())
+                .overview(tmdbMovieDetailDto.getOverview())
+                .releaseDate(tmdbMovieDetailDto.getReleaseDate())
+                .trailerPath(tmdbMovieDetailDto.getTrailerPath())
+                .build();
+
+        // 연관관계 (Movie, MovieActor, MovieDirector, MovieGenre)
+        movieDetail.setMovie(movieRepository.findByTmdbId(tmdbMovieDetailDto.getId()).get());
+
+        movieDetail.setDirector(MovieDirector.builder()
+                .tmdbId(tmdbMovieDetailDto.getDirector().getId())
+                .name(tmdbMovieDetailDto.getDirector().getName())
+                .profilePath(tmdbMovieDetailDto.getDirector().getProfilePath())
+                .build());
+
+        for (TmdbPersonDto actor : tmdbMovieDetailDto.getActors()) {
+            movieDetail.addMovieActor(MovieActor.builder()
+                    .tmdbId(actor.getId())
+                    .name(actor.getName())
+                    .role(actor.getRole())
+                    .profilePath(actor.getProfilePath())
+                    .build());
+        }
+
+        for (Genre genre : tmdbMovieDetailDto.getGenres()) {
+            movieDetail.addMovieGenre(MovieGenre.builder()
+                    .genre(genre)
+                    .build());
+        }
+
+        return movieDetailRepository.save(movieDetail);
     }
 
     /**
      * 영화 저장
      */
     @Transactional
-    public Movie saveMovie(Movie movie) {
-        return movieRepository.save(movie);
+    public Movie saveMovie(TmdbMovieDto tmdbMovieDto) {
+        return movieRepository.save(Movie.builder()
+                .tmdbId(tmdbMovieDto.getId())
+                .title(tmdbMovieDto.getTitle())
+                .posterPath(tmdbMovieDto.getPosterPath())
+                .build());
     }
 
     /**
      * 영화 리스트 저장
      */
     @Transactional
-    public List<Movie> saveMovies(List<Movie> movies) {
-        List<Movie> newMovies = new ArrayList<>();
-        for (Movie movie : movies) {
-            Optional<Movie> movieOptional = movieRepository.findByTmdbId(movie.getTmdbId());
+    public List<Movie> saveMovies(List<TmdbMovieDto> movies) {
+        List<Movie> movieList = new ArrayList<>();
+        for (TmdbMovieDto tmdbMovieDto : movies) {
+            Optional<Movie> movieOptional = movieRepository.findByTmdbId(tmdbMovieDto.getId());
             if (movieOptional.isEmpty())
-                newMovies.add(saveMovie(movie));
+                movieList.add(saveMovie(tmdbMovieDto));
             else
-                newMovies.add(movieOptional.get());
+                movieList.add(movieOptional.get());
         }
-        return newMovies;
+        return movieList;
     }
 
     /**
