@@ -6,11 +6,8 @@ import hello.movie.dto.MovieDetailDto;
 import hello.movie.dto.MovieDto;
 import hello.movie.model.Mbti;
 import hello.movie.service.MovieService;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,21 +23,9 @@ public class MovieController {
 
     private final MovieService movieService;
 
-
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "올바르지 않은 Movie ID"),
-            @ApiResponse(responseCode = "200", description = "영화 상세 정보 조회 성공")})
-    @GetMapping("/{movieId}")
+    @GetMapping(value = {"/{movieId}", "", "/"})
     public ResponseEntity<CustomResponse> getMovieDetails(@PathVariable Long movieId) {
-        Optional<MovieDetailDto> movieDetailDto = movieService.getMovieDetailByMovieId(movieId);
-
-        // 조회 실패
-        if (movieDetailDto.isEmpty()) {
-           CustomResponse response = CustomResponse.builder()
-                   .message("올바르지 않은 Movie ID: " + movieId)
-                   .build();
-           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
+        MovieDetailDto movieDetailDto = movieService.getMovieDetailByMovieId(movieId);
 
         // 조회 성공
         CustomResponse response = CustomResponse.builder()

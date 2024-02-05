@@ -1,5 +1,6 @@
 package hello.movie.service;
 
+import hello.movie.controller.exception.MovieNotFoundException;
 import hello.movie.dto.MovieDetailDto;
 import hello.movie.dto.MovieDto;
 import hello.movie.dto.TmdbDto.TmdbMovieDetailDto;
@@ -34,26 +35,23 @@ public class MovieService {
     /**
      * 영화 상세 정보 조회
      */
-    public Optional<MovieDetailDto> getMovieDetailByMovieId(Long movieId) {
-        Optional<Movie> movie = movieRepository.findById(movieId);
-
-        // 존재하지 않는 영화
-        if (movie.isEmpty()) return Optional.empty();
+    public MovieDetailDto getMovieDetailByMovieId(Long movieId) {
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException(movieId));
 
         // 영화 상세 정보 가져오기
         Optional<MovieDetail> movieDetail = movieDetailRepository.findByMovieId(movieId);
         MovieDetailDto movieDetailDto;
         if (movieDetail.isEmpty()) { // 영화 상세 정보가 없다면 TMDB에서 가져와서 저장
-            MovieDetail saved = saveMovieDetail(tmdbApiService.getMovieDetailById(movie.get().getTmdbId()));
+            MovieDetail saved = saveMovieDetail(tmdbApiService.getMovieDetailById(movie.getTmdbId()));
             movieDetailDto = modelMapper.map(saved, MovieDetailDto.class);
         }
         else movieDetailDto = modelMapper.map(movieDetail.get(), MovieDetailDto.class);
 
-        movieDetailDto.setTitle(movie.get().getTitle());
-        movieDetailDto.setPosterPath(movie.get().getPosterPath());
-        movieDetailDto.setId(movie.get().getId());
+        movieDetailDto.setTitle(movie.getTitle());
+        movieDetailDto.setPosterPath(movie.getPosterPath());
+        movieDetailDto.setId(movie.getId());
 
-        return Optional.of(movieDetailDto);
+        return movieDetailDto;
     }
 
     /**
