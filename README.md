@@ -47,5 +47,5 @@
 ## ERD
 <img width="80px">![alt ERD](/ERD.png)</img>
 
-## API 설계서
-[API 설계서](https://documenter.getpostman.com/view/29229350/2s9YywfKjS)
+## API 명세서
+[API 명세서](https://documenter.getpostman.com/view/29229350/2s9YywfKjS)
