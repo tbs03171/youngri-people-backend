@@ -1,147 +1,51 @@
-# softwareEngineering-project
+# 영리한 사람들
+> #### 영남대학교 컴퓨터공학과<br>개발 기간 : 2023.08 ~ 2023.01
+
 ## 프로젝트 소개
-"영리한 사람들"은 "영화 리뷰하는 사람들"을 줄인 말로, 영화 팬들이 영화에 대한 자신의 의견을 나눌 수 있는 플랫폼이다. 
+“영리한 사람들”은 영화 리뷰하는 사람들의 줄임말로, 영화 추천 및 리뷰 공유 웹사이트, 최신 영화 소식과 추천 영화를 제공하고 관객들의 다양한 의견을 공유할 수 있도록 도와주는 플랫폼입니다. 영화를 즐기는 사람들이 다양한 영화를 접하고 의견을 나눔으로써 더 큰 만족감을 느끼고, 주목 받지 못했던 영화들도 다시 주목 받을 수 있는 기회가 되기를 바라는 마음에 시작한 프로젝트입니다. 사용자는 다양한 영화들을 추천받고, 영화의 상세 정보를 확인하고, 영화에 대한 별점과 리뷰를 남길 수 있습니다. 또한, 다른 사용자를 구독하여 영화 감상평, 찜한 영화를 공유함으로써 다른 영화인들과 소통할 수 있습니다.
 
-## 개발 기간
-2023.8.25~2023.12.7
+## 멤버 구성
+#### 백엔드
+> * __조가을 : 로그인, 회원가입, 마이페이지, 커뮤니티, 영화 찜하기__
+> * __박현정 : DB 설계, 영화 관련 기능, 배포__
+> * __김도형 : 리뷰 crud, 리뷰 좋아요 기능__
 
-## 멤버구성
-조가을: 로그인, 회원가입, 마이페이지, 커뮤니티, 영화찜하기<br> 
-박현정: 영화(예고편, 감독정보, 장르정보 등등), 선호 장르<br> 
-김도형: 리뷰 crud, 리뷰 좋아요 기능 <br> 
-이정민: 메인, 영화 정보, 필모그래피, 장르, 영화 검색 화면 구현<br> 
-이채윤: 마이페이지, 마이페이지 수정, 유저 페이지, 리뷰 수정 화면 구현<br> 
-박지혜: 홈, 로그인, 회원가입, 커뮤니티, 구독, 사용자 검색 화면 구현<br> 
+#### 프론트엔드
+> * __이정민: 메인, 영화 정보, 필모그래피, 장르, 영화 검색 화면 구현__
+> * __이채윤: 마이페이지, 마이페이지 수정, 유저 페이지, 리뷰 수정 화면 구현__
+> * __박지혜: 홈, 로그인, 회원가입, 커뮤니티, 구독, 사용자 검색 화면 구현__
 
-## 개발 환경
-[백엔드]
-- Java 17
-- JDK
-- IDE:19.0.1
-- Framework: Springboot3.1.4
-- Database: H2
-- ORM: JPA
+## 사용 기술
+* __언어__<br>
+  <img src="https://img.shields.io/badge/Java-3776AB?style=for-the-badge&logoColor=white">
+  
+* __프레임워크__<br>
+  <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white">
+  <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white">
+  <img src="https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white">
 
-[프론트엔드]
-- node.js v18.16.1
-- npm v9.8.0
-- Framework: react v18.2.0
+* __데이터베이스 / 캐시__<br>
+  <img src="https://img.shields.io/badge/H2 Database-4053D6?style=for-the-badge&logoColor=white">
+  <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=MySQL&logoColor=white">
+  <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white">
 
-## 주요기능
-#### 로그인
-- Validation 검증 
-- DB값 검증(아이디, 비밀번호 일치 여부)
-- 로그인 성공 시 JWT 토큰 생성
+* __테스트__<br>
+  <img src="https://img.shields.io/badge/Junit5-25A162?style=for-the-badge&logo=Junit5&logoColor=white">
 
-#### 회원가입
-- Validation 검증 (+비밀번호 재확인)
-- userId 중복 체크 
+* __협업__<br>
+  <img src="https://img.shields.io/badge/Github-181717?style=for-the-badge&logo=github&logoColor=white">
+  <img src="https://img.shields.io/badge/swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=white">
 
-#### 마이페이지
-- 사용자 정보 보기 
-- 사용자 정보 수정
-- 내가 쓴 리뷰 보기
-- 내가 찜한 영화 목록 보기
-- 사용자 선호 장르 조회/등록/수정
+* __배포__<br>
+  <img src="https://img.shields.io/badge/AWS EC2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white">
+  <img src="https://img.shields.io/badge/AWS RDS-527FFF?style=for-the-badge&logo=amazonrds&logoColor=white">
 
-#### 커뮤니티
-- 사용자 팔로우, 언팔로우
-- 사용자 검색(사용자 아이디/ 닉네임 선택)
-- 전체 사용자 보기
-- 내가 팔로우한 사용자만 보기 
+* __도구__<br>
+  <img src="https://img.shields.io/badge/intellij idea-000000?style=for-the-badge&logo=intellijidea&logoColor=white">
+  <img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=Postman&logoColor=white">
 
-#### 영화 메인 
-영화 목록 조회
-- 개봉 예정인 영화
-- 상영 중인 영화
-- 인기 있는 영화
-- 평점 높은 영화
-- 장르별 영화 목록
+## ERD
+<img width="80px">![alt ERD](/ERD.png)</img>
 
-영화 검색
-- 배우/감독 이름으로 검색
-- 제목으로 검색
-
-영화 추천
-- 사용자 선호 장르 기반 영화 추천
-- 사용자 MBTI 기반 영화 추천
-
-#### 영화 
-영화 상세 정보 조회
-- 영화 개봉일, 예고편 동영상, 감독, 배우 등 조회
-
-필모그래피 조회
-- 배우/감독의 필모그래피 조회
-
-영화 찜하기(북마크)
-- 영화 찜하기
-- 영화 찜 취소
-- 찜한 영화 모두 보기
-
-리뷰 작성
-- 하고싶은 코멘트 작성
-- 별점 선택
-- 리뷰 등록
-- 리뷰 좋아요 지정 및 삭제
-
-## 화면 구성
-
-공통
-- 로고 클릭 시 홈 화면 또는 메인 화면으로 이동
-- 로그아웃 버튼 클릭 시 로그아웃
-- 영화 포스터 클릭 시 해당 영화 정보 화면으로 이동
-- 사용자의 프로필 이미지 클릭시 클릭한 사용자의 유저페이지 화면으로 이동
-
-#### 홈 화면(/)
-- [지금 바로, 리뷰 시작하기!] 버튼 클릭: 로그인 화면으로 이동
-
-#### 로그인 화면(/login)
-- 아이디, 비밀번호 입력 후 [로그인하기] 버튼 클릭 시 메인 화면으로 이동
-
-#### 회원가입 화면(/join)
-- 아이디, 비밀번호, 비밀번호 확인, 이름, 닉네임, 전화번호, 성별, 생년월일 입력 후 [회원가입하기] 버튼 클릭 시 로그인 화면으로 이동
-
-#### 메인화면(/main)
-- 장르 드롭다운에서 장르 선택: 선택한 장르 (default: ACTION)의 영화 목록 출력
-- 개봉 예정인 영화 목록, 현재 상영 중인 영화 목록, 인기 많은 영화 목록, 평점이 높은 영화 목록, MBTI 기반 추천 영화 목록, 선호 장르 기반 추천 영화 목록 출력
-
-#### 영화 정보 화면(/movie-information/:movieId)
-- 제목 우측의 북마크 클릭 시 북마크 설정/해제
-- 감독 및 출연배우 클릭 시 클릭한 감독 및 출연배우의 필모그래피 화면으로 이동
-- 장르 클릭 시 클릭한 장르의 장르 화면으로 이동
-- 별점 드롭다운에서 별점 선택과 코멘트 작성 후 [등록] 클릭 시 리뷰 등록
-- 작성자 아이디 클릭 시 클릭한 작성자의 유저 페이지 화면으로 이동
-- 리뷰 공감 버튼 클릭 시 공감 등록/해제
-
-#### 필모그래피 화면(/filmography/:personId)
-- 해당 감독 및 출연배우가 참여한 영화 목록 출력
-
-#### 장르 화면(/genre/:genre)
-- 해당 장르의 영화 목록 출력
-
-#### 영화 검색 화면(/movie-search)
-- 검색 필터 드롭다운에서 필터 선택, 키워드 입력 후 돋보기 클릭 시 조건에 맞는 영화 목록 출력
-
-#### 마이 페이지 화면(/my-page)
-- [변경] 클릭 시 마이 페이지 변경 화면으로 이동
-- [수정] 버튼 클릭 시 해당 리뷰의 리뷰 수정 화면으로 이동
-- [삭제] 버튼 클릭 시 해당 리뷰 삭제 후 화면 새로고침
-
-#### 마이 페이지 수정 화면(/my-page-edit)
-- 사용자 정보(프로필 이미지, 닉네임, 아이디, MBTI, 선호 장르 해시태그) 수정 후 [완료] 버튼 클릭 시 사용자 정보 변경 후 마이 페이지 화면으로 이동
-
-#### 리뷰 수정 화면(/review-edit/:reviewId)
-- 별점 드롭다운에서 별점 선택과 코멘트 작성 후 [등록] 클릭 시 리뷰 수정 후 마이 페이지 화면으로 이동
-
-#### 커뮤니티 화면(/community)
-- 모든 사용자 출력
-
-#### 구독 화면(/subscribe)
-- 구독한 사용자 출력
-
-#### 유저 페이지 화면(/user-page/:userId)
-- [구독(구독 중)] 버튼 클릭 시 구독/구독 취소
-- 리뷰 공감 버튼 클릭: 공감 등록/해제
-
-#### 사용자 검색 화면(/user-search)
-- 검색 필터 드롭다운에서 필터 선택, 키워드 입력 후 돋보기 클릭 시 조건에 맞는 사용자 목록 출력
+## API 명세서
+[API 명세서](https://documenter.getpostman.com/view/29229350/2s9YywfKjS)
