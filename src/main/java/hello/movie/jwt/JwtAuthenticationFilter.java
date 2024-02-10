@@ -3,7 +3,6 @@ package hello.movie.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hello.movie.CustomResponse;
 import hello.movie.auth.PrincipalDetails;
 import hello.movie.model.Member;
 import jakarta.servlet.FilterChain;
