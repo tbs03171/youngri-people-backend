@@ -33,7 +33,7 @@ public class SecurityConfig{
                 .apply(new MyCustomDsl())
                 .and()
                 .authorizeRequests()
-                .requestMatchers("/members/create","/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers("/members/create", "/login", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()
                 .and().build();
     }

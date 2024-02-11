@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @RestController
 @SecurityRequirement(name = "Bearer Authentication")
-@RequestMapping("/movies")
+@RequestMapping("/api/movies")
 @RequiredArgsConstructor
 public class MovieController {
 

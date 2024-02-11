@@ -39,6 +39,7 @@ public class LoginController {
             return ResponseEntity.badRequest().body(response);
         }
 
+        System.out.println("loginDto = " + loginDto.getUserId() + loginDto.getPassword());
         Optional<Member> loginMember = loginService.login(loginDto.getUserId(), loginDto.getPassword());
 
         if (loginMember.isEmpty()) {

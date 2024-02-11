@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
 @RestController
-@RequestMapping("/bookmark")
+@RequestMapping("/api/bookmark")
 public class BookMarkController {
 
     private final BookMarkService bookMarkService;
