@@ -29,7 +29,7 @@ public class LoginController {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "404", description = "서버 검증으로 실패"),
             @ApiResponse(responseCode = "400", description = "validation 오류로 실패")})
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<CustomResponse> login(@RequestBody @Valid LoginDto loginDto, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
