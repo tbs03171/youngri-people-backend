@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @SecurityRequirement(name = "Bearer Authentication")
-@RequestMapping("/api/preferred-genres")
+@RequestMapping("/preferred-genres")
 @RequiredArgsConstructor
 public class PreferredGenreController {
 

@@ -24,7 +24,7 @@ public class MovieDetailDto {
 class MovieActorDto {
     private String name;
     private Long tmdbId;
-    private String character;
+    private String role;
     private String profilePath;
 }
 

@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @SecurityRequirement(name = "Bearer Authentication")
 @RestController
-@RequestMapping("/api/follow")
+@RequestMapping("/follow")
 public class FollowController {
 
     private final FollowerService followerService;

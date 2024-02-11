@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/reviews")
+@RequestMapping("/reviews")
 @SecurityRequirement(name = "Bearer Authentication")
 public class ReviewController {
 
