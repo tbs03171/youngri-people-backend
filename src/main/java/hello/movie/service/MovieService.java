@@ -211,12 +211,15 @@ public class MovieService {
      * 영화 저장
      */
     @Transactional
-    public Movie saveMovie(TmdbMovieDto tmdbMovieDto) {
-        return movieRepository.save(Movie.builder()
+    public Optional<Movie> saveMovie(TmdbMovieDto tmdbMovieDto) {
+        Optional<Movie> movieOptional = movieRepository.findByTmdbId(tmdbMovieDto.getId());
+        if (movieOptional.isEmpty())
+            return Optional.of(movieRepository.save(Movie.builder()
                 .tmdbId(tmdbMovieDto.getId())
                 .title(tmdbMovieDto.getTitle())
                 .posterPath(tmdbMovieDto.getPosterPath())
-                .build());
+                .build()));
+        else return movieOptional;
     }
 
     /**
@@ -225,13 +228,8 @@ public class MovieService {
     @Transactional
     public List<Movie> saveMovies(List<TmdbMovieDto> movies) {
         List<Movie> movieList = new ArrayList<>();
-        for (TmdbMovieDto tmdbMovieDto : movies) {
-            Optional<Movie> movieOptional = movieRepository.findByTmdbId(tmdbMovieDto.getId());
-            if (movieOptional.isEmpty())
-                movieList.add(saveMovie(tmdbMovieDto));
-            else
-                movieList.add(movieOptional.get());
-        }
+        for (TmdbMovieDto tmdbMovieDto : movies)
+            movieList.add(saveMovie((tmdbMovieDto)).get());
         return movieList;
     }
 

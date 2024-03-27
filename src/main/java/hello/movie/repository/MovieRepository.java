@@ -2,7 +2,9 @@ package hello.movie.repository;
 
 import hello.movie.model.Mbti;
 import hello.movie.model.Movie;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -28,5 +30,6 @@ public interface MovieRepository extends JpaRepository<Movie, Long> {
             "ORDER BY avgRating DESC")
     Optional<List<Object[]>> findTopRatedMoviesByMbti(@Param("mbti")Mbti mbti);
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Movie> findByTmdbId(Long tmdbId);
 }
